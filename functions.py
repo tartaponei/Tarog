@@ -1,21 +1,30 @@
 import cards
 from random import choice
 
+def encerrar_jogo():
+    input("\nFim do jogo.\nAperte Enter para continuar...")
+
 def arcano_espelho():
+    """Método de Arcano Espelho"""
     carta = choice(cards.major) #pega um arcano maior aleatório
 
     print("\nSeu Arcano Espelho de hoje é: ", carta)
+    encerrar_jogo()
 
 def elementos():
+    """Método pra ver quais aspectos seus estão desarmonizados"""
     cartas = cards.numbered[0:]
     print("\nAs cartas que saíram são (veja os naipes apenas):")
 
-    for i in range(4):
+    for _ in range(4):
         carta = choice(cartas)
         cartas.remove(carta)
         print(carta)
 
+    encerrar_jogo()
+
 def mandala_tres():
+    """Método Mandala de 3"""
     cartas = cards.cards[0:]
     print("\n")
 
@@ -29,7 +38,10 @@ def mandala_tres():
 
         print("{}: {}" .format(r, carta))
 
+    encerrar_jogo()
+
 def mandala_cinco():
+    """Método Manda de 5"""
     cartas = cards.cards[0:]
     print("\n")
 
@@ -51,7 +63,10 @@ def mandala_cinco():
         msg = choice(cartas)
         print("\nMensagem: ", msg)
 
+    encerrar_jogo()
+
 def cruz_celta():
+    """Método Cruz Celta"""
     cartas = cards.cards[0:]
     print("\n")
 
@@ -71,3 +86,26 @@ def cruz_celta():
         else: r = "Resultado Final"
 
         print("{}: {}" .format(r, carta))
+
+    encerrar_jogo()
+
+def taca_amor():
+    """Método A Taça do Amor"""
+    cartas = cards.cards[0:]
+    print("\n")
+
+    for i in range(10):
+        carta = choice(cartas)
+        cartas.remove(carta)
+
+        if i == 0: r = "Como Está o Relacionamento"
+        elif i == 1: r = "Consulente Nessa Situação"
+        elif i == 2: r = "Parceiro Nessa Situação"
+        elif i == 3: r = "Favorece o Relacionamento"
+        elif i == 4: r = "Não Favorece o Relacionamento"
+        elif i == 5: r = "Futuro Próximo da Relação"
+        else: r = "Conselho Final"
+
+        print("{}: {}" .format(r, carta))
+
+    encerrar_jogo()
