@@ -17,7 +17,7 @@ print("\nBem-vindo ao Tarog!")
 
 while opcao != 0:
     print("\nEscolha um método:")
-    print("\n0- Sair\n1 - Arcano Espelho (1 carta)\n2- Elementos Desarmonizados (4 cartas)\n3- Mandala de 3 (3 cartas)\n4- Mandala de 5 (5 / 6 cartas)\n5- Cruz Celta (10 cartas)\n6- Taça do Amor (7 cartas)")
+    print("\n0- Sair\n1 - Arcano Espelho (1 carta)\n2- Elementos Desarmonizados (4 cartas)\n3- Mandala de 3 (3 cartas)\n4- Mandala de 5 (5 / 6 cartas)\n5- Cruz Celta (10 cartas)\n6- Taça do Amor (7 cartas)\n7- Jogo Personalizado")
     opcao = int(input("Digite o número: "))
 
     if opcao == 1:
@@ -32,3 +32,7 @@ while opcao != 0:
         functions.cruz_celta()
     elif opcao == 6:
         functions.taca_amor()
+    elif opcao == 7:
+        functions.jogo_personalizado()
+    else:
+        pass

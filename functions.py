@@ -1,19 +1,24 @@
 import cards
-from random import choice
+from random import choice, shuffle
 
 def encerrar_jogo():
+    """Encerramento do jogo, só pra ficar bonito"""
     input("\nFim do jogo.\nAperte Enter para continuar...")
 
 def arcano_espelho():
-    """Método de Arcano Espelho"""
+    """Método de Arcano Espelho.
+    1 Arcano Maior que é um espelho energético diário de quem tira a carta, e indica como vai ser seu dia e como agir. Autoconhecimento diário."""
     carta = choice(cards.major) #pega um arcano maior aleatório
 
     print("\nSeu Arcano Espelho de hoje é: ", carta)
     encerrar_jogo()
 
 def elementos():
-    """Método pra ver quais aspectos seus estão desarmonizados"""
+    """Método pra ver quais aspectos seus estão desarmonizados.
+    4 Arcanos Menores cujos naipes indicam quais aspectos (elementos) de quem tira a carta precisam ser harmonizados novamente.
+    Espadas = Mental, Copas = Emocional, Paus = Espiritual, Ouros = Físico"""
     cartas = cards.numbered[0:]
+    shuffle(cartas)
     print("\nAs cartas que saíram são (veja os naipes apenas):")
 
     for _ in range(4):
@@ -24,8 +29,11 @@ def elementos():
     encerrar_jogo()
 
 def mandala_tres():
-    """Método Mandala de 3"""
+    """Método Mandala de 3.
+    3 Arcanos que representam, respecitivamente, Passado ou Causa, Presente ou Situação Atual, e Futuro ou Consequência.
+    Para perguntas objetivas de sim ou não e bem formuladas."""
     cartas = cards.cards[0:]
+    shuffle(cartas)
     print("\n")
 
     for i in range(3):
@@ -41,8 +49,11 @@ def mandala_tres():
     encerrar_jogo()
 
 def mandala_cinco():
-    """Método Manda de 5"""
+    """Método Manda de 5.
+    5 Arcanos que representam, respecitvamente, Situação Atual, Influência Externa, Oposição, Favorecimento e Resultado. Uma 6ª carta pode ser tirada como Mensagem.
+    Para perguntas objetivas e bem formuladas."""
     cartas = cards.cards[0:]
+    shuffle(cartas)
     print("\n")
 
     for i in range(5):
@@ -66,8 +77,11 @@ def mandala_cinco():
     encerrar_jogo()
 
 def cruz_celta():
-    """Método Cruz Celta"""
+    """Método Cruz Celta.
+    10 Arcanos que representam, respectivamente, Situação Presente, Influência Imediata, Consulente Perante o Problema, Determinações do Passado, O Que o Consulente Não Conhece, Influências do Futuro, Consulente, Fatores Ambientais, Caminho do Destino, e Resultado Final.
+    Para perguntas bem formuladas, mas apresenta mais detalhes."""
     cartas = cards.cards[0:]
+    shuffle(cartas)
     print("\n")
 
     for i in range(10):
@@ -90,8 +104,11 @@ def cruz_celta():
     encerrar_jogo()
 
 def taca_amor():
-    """Método A Taça do Amor"""
+    """Método A Taça do Amor.
+    7 Arcanos que representam, respectivamente, Como Está O Relacionamento, Consulente Na Situação, Parceiro Na Situação, O Que Favorece O Relacionamento, O Que Não Favorece O Relacionamento, Futuro Próximo da Relação, e Conselho Final.
+    Para perguntas sobre amor e relacionamentos."""
     cartas = cards.cards[0:]
+    shuffle(cartas)
     print("\n")
 
     for i in range(10):
@@ -109,3 +126,44 @@ def taca_amor():
         print("{}: {}" .format(r, carta))
 
     encerrar_jogo()
+
+def jogo_personalizado():
+    """Joga um jogo personalizado, com número de cartas e quais Arcanos usar personalizados"""
+    n_cartas = int(input("\nDigite o número de cartas que você quer tirar: "))
+
+    if n_cartas == 1: n = "CARTA"
+    else: n = "CARTAS"
+    
+    print("\nEscolha quais cartas você quer usar:\n1- TODOS OS 78 ARCANOS\n2- SÓ ARCANOS MAIORES (22)\n3- SÓ ARCANOS MENORES (56)\n4- SÓ ARCANOS MENORES NUMERADOS (40)\n5- SÓ A CORTE (16)\n6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
+    resp = int(input("Digite o número: "))
+
+    if resp == 1: 
+        cartas = cards.cards
+        jogo = "TODO O BARALHO"
+    elif resp == 2: 
+        cartas = cards.major
+        jogo = "OS 22 ARCANOS MAIORES"
+    elif resp == 3: 
+        cartas = cards.minor
+        jogo = "OS 56 ARCANOS MENORES"
+    elif resp == 4: 
+        cartas = cards.numbered
+        jogo = "OS 40 ARCANOS MENORES NUMERADOS"
+    elif resp == 5: 
+        cartas = cards.court
+        jogo = "OS 16 ARCANOS MENORES DA CORTE"
+    elif resp == 6: 
+        cartas = cards.major + cards.numbered
+        jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
+
+    shuffle(cartas)
+    print("\n---->JOGO DE {} {}, USANDO {}:\n" .format(n_cartas, n, jogo))
+
+    for i in range(n_cartas):
+        carta = cartas[0]
+        cartas.pop(0) #exclui a carta tirada do maço
+
+        print("CASA {}: {}" .format(i+1, carta))
+
+    encerrar_jogo()
+
