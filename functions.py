@@ -111,7 +111,7 @@ def taca_amor():
     shuffle(cartas)
     print("\n")
 
-    for i in range(10):
+    for i in range(7):
         carta = choice(cartas)
         cartas.remove(carta)
 
@@ -167,3 +167,26 @@ def jogo_personalizado():
 
     encerrar_jogo()
 
+def templo_afrodite():
+    """Método Templo de Afrodite.
+    7 Arcanos que representam, respectivamente, áreas Mental, Sentimental e Física de quem tira as cartas (1, 2, 3), áreas Mental, Sentimental e Física do(a) parceiro(a) (4, 5, 6) e a Síntese do Relacionamento (Prognóstico).
+    Para questões sobre estado e situação de um relacionamento."""
+    cartas = cards.cards[0:]
+    shuffle(cartas)
+    print("\n")
+
+    for i in range(7):
+        carta = choice(cartas)
+        cartas.remove(carta)
+
+        if i == 0: r = "VOCÊ:\nO Que Você Pensa Sobre Relacionamento"
+        elif i == 1: r = "O Que Você Sente Pelo(a) Parceiro(a), Seu Coração"
+        elif i == 2: r = "Sua Atração Física Pelo(a) Parceiro(a), Seu Tesão"
+        elif i == 3: r = "\nPARCEIRO(A):\nO Que Ele Pensa Sobre Relacionamento"
+        elif i == 4: r = "O Que Ele(a) Sente Por Você, O Coração Dele"
+        elif i == 5: r = "A Atração Dele(a) Por Você, O Tesão Dele"
+        else: r = "Síntese, Prognóstico da Relação"
+
+        print("{}: {}" .format(r, carta))
+
+    encerrar_jogo()
