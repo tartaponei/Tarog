@@ -1,5 +1,6 @@
 import cards
-from random import choice, shuffle
+import sqlite3
+from random import choice, shuffle, randint, sample
 
 def encerrar_jogo():
     """Encerramento do jogo, só pra ficar bonito"""
@@ -8,7 +9,13 @@ def encerrar_jogo():
 def arcano_espelho():
     """Método de Arcano Espelho.
     1 Arcano Maior que é um espelho energético diário de quem tira a carta, e indica como vai ser seu dia e como agir. Autoconhecimento diário."""
-    carta = choice(cards.major) #pega um arcano maior aleatório
+
+    connection = sqlite3.connect("database.db")
+
+    n = str(randint(1, 23))
+
+    for linha in connection.execute("SELECT DISTINCT nome FROM cartas WHERE id = ?", (n,)):
+        carta = linha[0]
 
     print("\nSeu Arcano Espelho de hoje é: ", carta)
     encerrar_jogo()
@@ -17,14 +24,13 @@ def elementos():
     """Método pra ver quais aspectos seus estão desarmonizados.
     4 Arcanos Menores cujos naipes indicam quais aspectos (elementos) de quem tira a carta precisam ser harmonizados novamente.
     Espadas = Mental, Copas = Emocional, Paus = Espiritual, Ouros = Físico"""
-    cartas = cards.numbered[0:]
-    shuffle(cartas)
+
+    connection = sqlite3.connect("database.db")
+
     print("\nAs cartas que saíram são (veja os naipes apenas):")
 
-    for _ in range(4):
-        carta = choice(cartas)
-        cartas.remove(carta)
-        print(carta)
+    for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado' ORDER BY RANDOM() LIMIT 4"):
+        print(linha[0])
 
     encerrar_jogo()
 
