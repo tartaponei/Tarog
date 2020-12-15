@@ -1,13 +1,26 @@
-import cards
 import sqlite3
-from random import choice, shuffle, randint, sample
+from random import shuffle, randint, sample
+from colorama import init, Style, Fore
 
-def comecar_jogo():
+init(autoreset=True)
+
+TODOS = range(1, 79)
+MENORES = range(1, 57)
+MAIORES = range(1, 23)
+
+def comecar_jogo(personalizado=None):
+    """Começo do jogo. Abertura da conexão com o banco"""
+
     connection = sqlite3.connect("database.db")
-    return connection
+
+    if not personalizado:
+        cursor = connection.cursor()
+        return connection, cursor
+    else: return connection
 
 def encerrar_jogo(connection):
-    """Encerramento do jogo, só pra ficar bonito"""
+    """Encerramento do jogo, fechamento da conexão com o banco."""
+
     connection.close()
     input("\nFim do jogo.\nAperte Enter para continuar...")
 
@@ -16,14 +29,14 @@ def encerrar_jogo(connection):
 def jogo_personalizado():
     """Joga um jogo personalizado, com número de cartas e quais Arcanos usar personalizados."""
 
-    connection = comecar_jogo()
+    connection = comecar_jogo(personalizado=True)
 
     n_cartas = int(input("\nDigite o número de cartas que você quer tirar: "))
 
     if n_cartas == 1: n = "CARTA"
     else: n = "CARTAS"
     
-    print("\nEscolha quais cartas você quer usar:\n1- TODOS OS 78 ARCANOS\n2- SÓ ARCANOS MAIORES (22)\n3- SÓ ARCANOS MENORES (56)\n4- SÓ ARCANOS MENORES NUMERADOS (40)\n5- SÓ A CORTE (16)\n6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
+    print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n" + Fore.GREEN + "4- SÓ ARCANOS MENORES NUMERADOS (40)\n" + Fore.RED + "5- SÓ A CORTE (16)\n" + Fore.BLUE + "6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
     resp = int(input("Digite o número: "))
 
     cartas = []
@@ -68,13 +81,13 @@ def jogo_personalizado():
         jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
 
     shuffle(cartas)
-    print("\n----> JOGO DE {} {}, USANDO {}:\n" .format(n_cartas, n, jogo))
+    print(Fore.CYAN + "\n--> JOGO DE {} {}, USANDO {} <--\n" .format(n_cartas, n, jogo))
 
     for i in range(n_cartas):
-        carta = cartas[0]
-        cartas.pop(0) #exclui a carta tirada do maço
+        carta = cartas[0] #pega as primeiras cartas do maço
+        cartas.pop(0)
 
-        print("CASA {}: {}" .format(i+1, carta))
+        print(Fore.CYAN + "CASA {}:" .format(i+1) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
 
@@ -83,14 +96,15 @@ def arcano_espelho():
     1 Arcano Maior que é um espelho energético diário ou semanal de quem tira a carta, e indica como vai ser seu dia/semana e como agir.
     Autoconhecimento diário. Usuário mentaliza se quer saber do dia ou da semana."""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
     n = str(randint(1, 23))
+    cursor.execute("SELECT DISTINCT nome FROM cartas WHERE id = ?", (n,))
+    cartas = cursor.fetchall()
+    
+    carta = cartas[0][0]
 
-    for linha in connection.execute("SELECT DISTINCT nome FROM cartas WHERE id = ?", (n,)):
-        carta = linha[0]
-
-    print("\nSeu Arcano Espelho de hoje/semana é: ", carta)
+    print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
     encerrar_jogo(connection)
 
 def elementos():
@@ -98,12 +112,21 @@ def elementos():
     4 Arcanos Menores cujos naipes indicam quais aspectos (elementos) de quem tira a carta precisam ser harmonizados novamente.
     Espadas = Mental, Copas = Emocional, Paus = Espiritual, Ouros = Físico"""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
-    print("\nAs cartas que saíram são (veja os naipes apenas):")
+    print("\nAS CARTAS QUE SAÍRAM SÃO (VEJA OS NAIPES APENAS):")
 
-    for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor' ORDER BY RANDOM() LIMIT 4"):
-        print(linha[0])
+    numeros = sample(MENORES, 4)
+
+    cursor.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'")
+    cartas = cursor.fetchall()
+
+    for numero in numeros:
+        if "Espadas" in cartas[numero][0]: cor = Fore.YELLOW
+        elif "Copas" in cartas[numero][0]: cor = Fore.BLUE
+        elif "Paus" in cartas[numero][0]: cor = Fore.RED
+        else: cor = Fore.GREEN
+        print(cor + cartas[numero][0])
 
     encerrar_jogo(connection)
 
@@ -112,18 +135,23 @@ def mandala_tres():
     3 Arcanos que representam, respecitivamente, Passado ou Causa, Presente ou Situação Atual, e Futuro ou Consequência.
     Para perguntas objetivas de sim ou não e bem formuladas."""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
-    print("MANDALA DE 3\n")
+    print(Fore.YELLOW + "\n--> MANDALA DE 3 <--\n")
 
-    for linha in enumerate(connection.execute("SELECT nome FROM cartas ORDER BY RANDOM() LIMIT 3")):
-        carta = linha[1][0]
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
 
-        if linha[0] == 0: r = "Causa"
-        elif linha[0] == 1: r = "Situação"
-        else: r = "Consequência"
+    numeros = sample(TODOS, 3)
 
-        print("{}: {}" .format(r, carta))
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][0]
+
+        if numero[0] == 0: r = "CAUSA"
+        elif numero[0] == 1: r = "SITUAÇÃO"
+        else: r = "CONSEQUÊNCIA"
+
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
 
@@ -132,21 +160,26 @@ def mandala_cinco():
     5 Arcanos que representam, respecitvamente, Situação Atual, Influência Externa, Oposição, Favorecimento e Resultado. Uma 6ª carta pode ser tirada como Mensagem.
     Para perguntas objetivas e bem formuladas."""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
-    print("MANDALA DE 5:\n")
+    print(Fore.YELLOW + "\n--> MANDALA DE 5 <--\n")
 
-    for linha in enumerate(connection.execute("SELECT nome FROM cartas ORDER BY RANDOM() LIMIT 6")):
-        if linha[0] < 5:
-            carta = linha[1][0]
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
 
-            if linha[0] == 0: r = "Situação"
-            elif linha[0] == 1: r = "Influência Externa"
-            elif linha[0] == 2: r = "Oposição"
-            elif linha[0] == 3: r = "Favorecimento"
-            elif linha[0] == 4: r = "Resultado"
+    numeros = sample(TODOS, 6)
 
-            print("{}: {}" .format(r, carta))
+    for numero in enumerate(numeros):
+        if numero[0] < 5:
+            carta = cartas[numero[1]][0]
+
+            if numero[0] == 0: r = "SITUAÇÃO"
+            elif numero[0] == 1: r = "INFLUÊNCIA EXTERNA"
+            elif numero[0] == 2: r = "OPOSIÇÃO"
+            elif numero[0] == 3: r = "FAVORECIMENTO"
+            elif numero[0] == 4: r = "RESULTADO"
+
+            print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
         else:
             resp = ""
@@ -154,8 +187,8 @@ def mandala_cinco():
                 resp = input("\nDeseja tirar uma Mensagem? ")
 
             if resp == "sim":
-                msg = linha[1][0]
-                print("\nMensagem: ", msg)
+                msg = cartas[numero[1]][0]
+                print(Fore.YELLOW + "\nMENSAGEM:" + Fore.RESET + msg)
 
     encerrar_jogo(connection)
 
@@ -164,25 +197,30 @@ def cruz_celta():
     10 Arcanos que representam, respectivamente, Situação Presente, Influência Imediata, Consulente Perante o Problema, Determinações do Passado, O Que o Consulente Não Conhece, Influências do Futuro, Consulente, Fatores Ambientais, Caminho do Destino, e Resultado Final.
     Para perguntas bem formuladas, mas apresenta mais detalhes."""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
-    print("\nCRUZ CELTA\n")
+    print(Fore.BLUE + "\n--> CRUZ CELTA <--\n")
 
-    for linha in enumerate(connection.execute("SELECT nome FROM cartas ORDER BY RANDOM() LIMIT 10")):
-        carta = linha[1][0]
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
 
-        if linha[0] == 0: r = "Situação (Pessoa ou atmosfera espiritual)"
-        elif linha[0] == 1: r = "Influência Imediata"
-        elif linha[0] == 2: r = "Consulente Perante o Problema"
-        elif linha[0] == 3: r = "Passado"
-        elif linha[0] == 4: r = "Consulente Não Sabe"
-        elif linha[0] == 5: r = "Futuro que vai influenciar"
-        elif linha[0] == 6: r = "Representação do Consulente"
-        elif linha[0] == 7: r = "Fatores Ambientais (Casa 1)"
-        elif linha[0] == 8: r = "Caminho para o sucesso"
-        else: r = "Resultado Final"
+    numeros = sample(TODOS, 10)
 
-        print("{}: {}" .format(r, carta))
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][0]
+
+        if numero[0] == 0: r = "SITUAÇÃO (PESSOA OU ATMOSFERA ESPIRITUAL)"
+        elif numero[0] == 1: r = "INFLUÊNCIA IMEDIATA"
+        elif numero[0] == 2: r = "CONSULENTE PERANTE O PROBLEMA"
+        elif numero[0] == 3: r = "PASSADO"
+        elif numero[0] == 4: r = "CONSULENTE NÃO SABE"
+        elif numero[0] == 5: r = "FUTURO QUE VAI INFLUENCIAR"
+        elif numero[0] == 6: r = "REPRESENTAÇÃO DO CONSULENTE"
+        elif numero[0] == 7: r = "FATORES AMBIENTAIS (CASA 1)"
+        elif numero[0] == 8: r = "CAMINHO PARA O SUCESSO"
+        else: r = "RESULTADO FINAL"
+
+        print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
 
@@ -191,21 +229,27 @@ def taca_amor():
     7 Arcanos que representam, respectivamente, Como Está O Relacionamento, Consulente Na Situação, Parceiro Na Situação, O Que Favorece O Relacionamento, O Que Não Favorece O Relacionamento, Futuro Próximo da Relação, e Conselho Final.
     Para perguntas sobre amor e relacionamentos."""
 
-    connection = comecar_jogo()
-    print("\nTAÇA DO AMOR\n")
+    connection, cursor = comecar_jogo()
 
-    for linha in enumerate(connection.execute("SELECT nome FROM cartas ORDER BY RANDOM() LIMIT 7")):
-        carta = linha[1][0]
+    print(Fore.MAGENTA + "\n--> TAÇA DO AMOR <--\n")
 
-        if linha[0] == 0: r = "Como Está o Relacionamento"
-        elif linha[0] == 1: r = "Consulente Nessa Situação"
-        elif linha[0] == 2: r = "Parceiro Nessa Situação"
-        elif linha[0] == 3: r = "Favorece o Relacionamento"
-        elif linha[0] == 4: r = "Não Favorece o Relacionamento"
-        elif linha[0] == 5: r = "Futuro Próximo da Relação"
-        else: r = "Conselho Final"
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
 
-        print("{}: {}" .format(r, carta))
+    numeros = sample(TODOS, 7)
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][0]
+
+        if numero[0] == 0: r = "COMO ESTÁ O RELACIONAMENTO"
+        elif numero[0] == 1: r = "CONSULENTE NESSA SITUAÇÃO"
+        elif numero[0] == 2: r = "PARCEIRO NESSA SITUAÇÃO"
+        elif numero[0] == 3: r = "FAVORECE O RELACIONAMENTO"
+        elif numero[0] == 4: r = "NÃO FAVORECE O RELACIONAMENTO"
+        elif numero[0] == 5: r = "FUTURO PRÓXIMO DA RELAÇÃO"
+        else: r = "CONSELHO FINAL"
+
+        print(Fore.MAGENTA + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
 
@@ -214,21 +258,26 @@ def templo_afrodite():
     7 Arcanos que representam, respectivamente, áreas Mental, Sentimental e Física de quem tira as cartas (1, 2, 3), áreas Mental, Sentimental e Física do(a) parceiro(a) (4, 5, 6) e a Síntese do Relacionamento (Prognóstico).
     Para questões sobre estado e situação de um relacionamento."""
 
-    connection = comecar_jogo()
+    connection, cursor = comecar_jogo()
 
-    print("\nTEMPLO DE AFRODITE\n")
+    print(Fore.MAGENTA + "\n--> TEMPLO DE AFRODITE <--\n")
 
-    for linha in enumerate(connection.execute("SELECT nome FROM cartas ORDER BY RANDOM() LIMIT 7")):
-        carta = linha[1][0]
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
 
-        if linha[0] == 0: r = "VOCÊ:\nO Que Você Pensa Sobre Relacionamento"
-        elif linha[0] == 1: r = "O Que Você Sente Pelo(a) Parceiro(a), Seu Coração"
-        elif linha[0] == 2: r = "Sua Atração Física Pelo(a) Parceiro(a), Seu Tesão"
-        elif linha[0] == 3: r = "\nPARCEIRO(A):\nO Que Ele Pensa Sobre Relacionamento"
-        elif linha[0] == 4: r = "O Que Ele(a) Sente Por Você, O Coração Dele"
-        elif linha[0] == 5: r = "A Atração Dele(a) Por Você, O Tesão Dele"
-        else: r = "\nSíntese, Prognóstico da Relação"
+    numeros = sample(TODOS, 7)
 
-        print("{}: {}" .format(r, carta))
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][0]
+
+        if numero[0] == 0: r = Fore.YELLOW + "VOCÊ:" + Fore.MAGENTA + "\nO QUE VOCÊ PENSA SOBRE O RELACIONAMENTO"
+        elif numero[0] == 1: r = "O QUE VOCÊ SENTE PELO(A) PARCEIRO(A), SEU CORAÇÃO"
+        elif numero[0] == 2: r = "SUA ATRAÇÃO FÍSICA PELO(A) PARCEIRO(A), SEU TESÃO"
+        elif numero[0] == 3: r = Fore.YELLOW + "\nPARCEIRO(A):" + Fore.MAGENTA + "\nO QUE ELE PENSA SOBRE O RELACIONAMENTO"
+        elif numero[0] == 4: r = "O QUE ELE(A) SENTE POR VOCÊ, O CORAÇÃO DELE(A)"
+        elif numero[0] == 5: r = "A ATRAÇÃO DELE(A) POR VOCÊ, O TESÃO DELE(A)"
+        else: r = "\nSÍNTESE, PROGNÓSTICO DA RELAÇÃO"
+
+        print(Fore.MAGENTA + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
