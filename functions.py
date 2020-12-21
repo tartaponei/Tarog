@@ -44,31 +44,26 @@ def jogo_personalizado():
     if resp == 1: 
         for linha in connection.execute("SELECT nome FROM cartas"):
             cartas.append(linha[0])
-
         jogo = "TODO O BARALHO"
 
     elif resp == 2: 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
             cartas.append(linha[0])
-
         jogo = "OS 22 ARCANOS MAIORES"
 
     elif resp == 3: 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
             cartas.append(linha[0])
-
         jogo = "OS 56 ARCANOS MENORES"
 
     elif resp == 4: 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
             cartas.append(linha[0])
-
         jogo = "OS 40 ARCANOS MENORES NUMERADOS"
 
     elif resp == 5: 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'corte'"):
             cartas.append(linha[0])
-
         jogo = "OS 16 ARCANOS MENORES DA CORTE"
 
     elif resp == 6: 
@@ -77,7 +72,6 @@ def jogo_personalizado():
 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
             cartas.append(linha[0])
-
         jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
 
     shuffle(cartas)
@@ -93,16 +87,35 @@ def jogo_personalizado():
 
 def arcano_espelho():
     """Método de Arcano Espelho.
-    1 Arcano Maior que é um espelho energético diário ou semanal de quem tira a carta, e indica como vai ser seu dia/semana e como agir.
+    1 Arcano Maior (ou pode usar o baralho todo) que é um espelho energético diário ou semanal de quem tira a carta, e indica como vai ser seu dia/semana e como agir.
     Autoconhecimento diário. Usuário mentaliza se quer saber do dia ou da semana."""
 
-    connection, cursor = comecar_jogo()
+    connection = comecar_jogo(personalizado=True)
 
-    n = str(randint(1, 23))
-    cursor.execute("SELECT DISTINCT nome FROM cartas WHERE id = ?", (n,))
-    cartas = cursor.fetchall()
-    
-    carta = cartas[0][0]
+    print(Fore.GREEN + "--> ARCANO ESPELHO DO DIA/SEMANA <--")
+    print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
+    resp = int(input("Digite o número: "))
+
+    cartas = []
+
+    if resp == 1: 
+        for linha in connection.execute("SELECT nome FROM cartas"):
+            cartas.append(linha[0])
+        n = 78
+
+    elif resp == 2: 
+        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+            cartas.append(linha[0])
+        n = 22
+
+    elif resp == 3: 
+        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
+            cartas.append(linha[0])
+        n = 56
+
+    shuffle(cartas)
+    indice = randint(0, n)
+    carta = cartas[indice]
 
     print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
     encerrar_jogo(connection)
@@ -279,5 +292,31 @@ def templo_afrodite():
         else: r = "\nSÍNTESE, PROGNÓSTICO DA RELAÇÃO"
 
         print(Fore.MAGENTA + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+
+    encerrar_jogo(connection)
+
+def carater():
+    """Método do Caráter
+    4 Arcanos que representam, respectivamente, a Persona da pessoa em questão (o que ela mostra ser, a "máscara"), a Personalidade (o que ela é realmente e não mostra), as Motivações (o que a leva a agir desse jeito) e as Intenções (o que ela realmente quer de você).
+    Para saber sobre as intenções de alguém que você talvez desconfie, saber o que ela quer com você."""
+
+    connection, cursor = comecar_jogo()
+
+    print(Fore.GREEN + "\n--> MÉTODO DO CARÁTER <--\n")
+
+    cursor.execute("SELECT nome FROM cartas")
+    cartas = cursor.fetchall()
+
+    numeros = sample(TODOS, 4)
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][0]
+
+        if numero[0] == 0: r = "PERSONA, O QUE A PESSOA MOSTRA SER E É VISÍVEL"
+        elif numero[0] == 1: r = "PERSONALIDADE, O QUE ELA ESCONDE E NÃO É VISÍVEL"
+        elif numero[0] == 2: r = "MOTIVAÇÕES DELA, O QUE LEVA ELA A AGIR ASSIM"
+        else: r = "INTENÇÕES DELA, O QUE ELA QUER DE VOCÊ"
+
+        print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
     encerrar_jogo(connection)
