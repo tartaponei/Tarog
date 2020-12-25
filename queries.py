@@ -2,8 +2,9 @@ import sqlite3
 import cards
 
 connection = sqlite3.connect("database.db")
+c = connection.cursor()
 
-for carta in cards.major:
+"""for carta in cards.major:
     print(carta)
     connection.execute("INSERT INTO 'cartas' ('nome', 'tipo_id') VALUES (?, ?)", (carta, '1'))
 connection.commit()
@@ -16,4 +17,8 @@ connection.commit()
 for carta in cards.court:
     print(carta)
     connection.execute("INSERT INTO 'cartas' ('nome', 'tipo_id') VALUES (?, ?)", (carta, '3'))
-connection.commit()
+connection.commit()"""
+
+c.execute("SELECT nome, valor FROM cartas")
+a = c.fetchall()
+print(a[0])

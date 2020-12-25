@@ -4,9 +4,9 @@ from colorama import init, Style, Fore
 
 init(autoreset=True)
 
-TODOS = range(1, 79)
-MENORES = range(1, 57)
-MAIORES = range(1, 23)
+TODOS = range(0, 78)
+MENORES = range(0, 56)
+MAIORES = range(0, 22)
 
 def comecar_jogo(personalizado=None):
     """Começo do jogo. Abertura da conexão com o banco"""
@@ -31,13 +31,18 @@ def jogo_personalizado():
 
     connection = comecar_jogo(personalizado=True)
 
-    n_cartas = int(input("\nDigite o número de cartas que você quer tirar: "))
+    n_cartas = ""
+    while n_cartas == 0 or not n_cartas.isnumeric():
+        n_cartas = input("\nDigite o número de cartas que você quer tirar: ")
+    n_cartas = int(n_cartas)
 
     if n_cartas == 1: n = "CARTA"
     else: n = "CARTAS"
-    
-    print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n" + Fore.GREEN + "4- SÓ ARCANOS MENORES NUMERADOS (40)\n" + Fore.RED + "5- SÓ A CORTE (16)\n" + Fore.BLUE + "6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
-    resp = int(input("Digite o número: "))
+
+    resp = 0
+    while resp < 1 or resp > 6:
+        print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n" + Fore.GREEN + "4- SÓ ARCANOS MENORES NUMERADOS (40)\n" + Fore.RED + "5- SÓ A CORTE (16)\n" + Fore.BLUE + "6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
+        resp = int(input("Digite o número: "))
 
     cartas = []
 
@@ -92,9 +97,10 @@ def arcano_espelho():
 
     connection = comecar_jogo(personalizado=True)
 
-    print(Fore.GREEN + "--> ARCANO ESPELHO DO DIA/SEMANA <--")
-    print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
-    resp = int(input("Digite o número: "))
+    resp = 0
+    while resp < 0 and resp > 3:
+        print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
+        resp = int(input("Digite o número: "))
 
     cartas = []
 
@@ -116,6 +122,8 @@ def arcano_espelho():
     shuffle(cartas)
     indice = randint(0, n)
     carta = cartas[indice]
+
+    print(Fore.GREEN + "\n--> ARCANO ESPELHO DO DIA/SEMANA <--")
 
     print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
     encerrar_jogo(connection)
@@ -318,5 +326,65 @@ def carater():
         else: r = "INTENÇÕES DELA, O QUE ELA QUER DE VOCÊ"
 
         print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+
+    encerrar_jogo(connection)
+
+def peladan():
+    """Método Peladán.
+    5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e Síntese/Consulente. A Síntese é obtida ou na hora da escolha das cartas ou através da soma dos valores numéricos dos Arcanos do jogo e redução teosófica (se necessário), resultando num Arcano Maior nesse último caso.
+    Para perguntas objetivas, bem formuladas e com tempo determinado."""
+
+    connection, cursor = comecar_jogo()
+
+    resp = 0
+    while resp < 1 or resp > 2:
+        print("\nEscolha como quer tirar a carta de síntese:\n" + Fore.CYAN + "1- TIRANDO 5 CARTAS NO JOGO\n" + Fore.MAGENTA + "2- POR SOMA NUMÉRICA DOS ARCANOS\n")
+        resp = int(input("Digite o número: "))
+
+    if resp == 1:
+        cursor.execute("SELECT nome FROM cartas")
+        cartas = cursor.fetchall()
+
+        numeros = sample(TODOS, 5) #pega 5
+
+    else:
+        cursor.execute("SELECT nome, valor FROM cartas")
+        cartas = cursor.fetchall()
+
+        numeros = sample(TODOS, 4) #pega 4
+
+        #SOMA DOS VALORES E REDUÇÃO TEOSÓFICA
+        soma = 0
+        for numero in numeros:
+            print(cartas[numero])
+            soma += int(cartas[numero][1])
+        print(soma)
+        while soma > 21:
+            soma_s = str(soma)
+            soma = int(soma_s[0]) + int(soma_s[1]) #soma os algarismos
+        print(soma)
+
+        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior' AND cartas.valor = ?", [str(soma)]):
+            sintese = linha[0]
+            numeros.append(10)
+
+    print(Fore.YELLOW + "\n--> PELADÁN <--\n")
+
+    for numero in enumerate(numeros):
+        if numero[0] < 4:
+            carta = cartas[numero[1]][0]
+
+            if numero[0] == 0: r = "POSITIVO, O QUE ESTÁ A FAVOR"
+            elif numero[0] == 1: r = "NEGATIVO, O QUE ESTÁ CONTRA"
+            elif numero[0] == 2: r = "CAMINHO, COMO CONCILIAR OS DOIS ANTERIORES"
+            elif numero[0] == 3: r = "RESULTADO"
+
+            print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+
+        else:
+            if resp == 2:
+                print(Fore.YELLOW + "COMO O CONSULENTE ESTÁ DIANTE DA SITUAÇÃO: " + Fore.RESET + sintese)
+            else:
+                print(Fore.YELLOW + "COMO O CONSULENTE ESTÁ DIANTE DA SITUAÇÃO: " + Fore.RESET + cartas[numeros[4]][0])
 
     encerrar_jogo(connection)
