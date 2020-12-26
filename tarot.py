@@ -366,7 +366,7 @@ def peladan():
 
         for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior' AND cartas.valor = ?", [str(soma)]):
             sintese = linha[0]
-            numeros.append(10)
+            numeros.append(10) #um numero aleratorio pra somar 5 na lista
 
     print(Fore.YELLOW + "\n--> PELADÁN <--\n")
 
