@@ -1,6 +1,5 @@
 import sqlite3
-from random import shuffle, randint, sample
-from colorama import init, Style, Fore
+from colorama import init, Fore
 
 init(autoreset=True)
 
