@@ -21,7 +21,7 @@ for carta in cards.court:
     connection.execute("INSERT INTO 'cartas' ('nome', 'tipo_id') VALUES (?, ?)", (carta, '3'))
 connection.commit()"""
 
-imgs = []
+"""imgs = []
 
 for img in os.listdir("./img/minor"):
     if img.endswith(".png"):
@@ -39,4 +39,11 @@ for img in imgs:
     print(len(data))
 
     connection.execute("UPDATE 'cartas' SET imagem = ? WHERE id = ?", (data, i_id))
-    connection.commit()
+    connection.commit()"""
+
+with open("./img/major/00-fool.png", "rb") as file:
+    img_data = file.read()
+    print(type(img_data))
+
+a = Image.open("./img/major/00-fool.png")
+print(a.mode)

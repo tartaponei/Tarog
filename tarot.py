@@ -1,4 +1,5 @@
 import sqlite3
+import os
 from PIL import Image
 from random import shuffle, randint, sample
 from colorama import init, Style, Fore
@@ -99,34 +100,60 @@ def arcano_espelho():
     connection = comecar_jogo(personalizado=True)
 
     resp = 0
-    while resp < 0 and resp > 3:
+    while resp < 1 or resp > 3:
         print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
         resp = int(input("Digite o número: "))
 
     cartas = []
 
     if resp == 1: 
-        for linha in connection.execute("SELECT nome FROM cartas"):
-            cartas.append(linha[0])
+        for linha in connection.execute("SELECT id, nome FROM cartas"):
+            cartas.append(linha)
         n = 78
+        path = "./img"
 
     elif resp == 2: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
-            cartas.append(linha[0])
+        for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+            cartas.append(linha)
         n = 22
+        path = "./img/major"
 
     elif resp == 3: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
-            cartas.append(linha[0])
+        for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
+            cartas.append(linha)
         n = 56
+        path = "./img/minor"
 
     shuffle(cartas)
-    indice = randint(0, n)
-    carta = cartas[indice]
+    indice = randint(0, n-1)
+    carta = cartas[indice][1] #nome da carta
+    c_id = cartas[indice][0]
+
+    pasta = ""
+
+    if n == 78: #se forem todos os arcanos, vai ter que ver as duas subpastas
+        for _, _, files in os.walk(path):
+            for imagem in files:
+                if imagem.endswith(".png"):
+                    nome = os.path.splitext(imagem)
+
+                    if imagem in os.listdir("./img/major"): pasta = "major"
+                    else: pasta = "minor"
+
+                    if int(nome[0][:2]) == int(c_id)-1: 
+                        img = Image.open("./img/{}/{}" .format(pasta, imagem))
+    else:
+        for imagem in os.listdir(path):
+            nome = os.path.splitext(imagem)
+
+            if int(nome[0][:2]) == int(c_id)-1: 
+                img = Image.open(imagem)
 
     print(Fore.GREEN + "\n--> ARCANO ESPELHO DO DIA/SEMANA <--")
 
     print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
+    img.show()
+    
     encerrar_jogo(connection)
 
 def elementos():

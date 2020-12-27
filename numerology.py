@@ -62,6 +62,10 @@ def checar_nome():
     return soma
 
 def checar_data(get_dia=None):
+    """
+    Faz o somatório dos valores da data de nascimento.
+    """
+
     ano = input("\nDigite o ANO que você nasceu (AAAA): ")
     mes = input("Digite o número do MÊS que você nasceu (ex.: se for Março, digite 3): ")
     dia = input("Digite agora o DIA do nascimento: ")
@@ -81,6 +85,10 @@ def checar_data(get_dia=None):
 ##
 
 def arcano_pessoal(n_nome=None, conn=None):
+    """
+    Vê qual é o Arcano pessoal da pessoa, que indica as tendências da pessoa, sua essência e modo de agir.
+    """
+
     if n_nome and conn: 
         num = str(n_nome) #se já tiver calculado
         connection = conn
@@ -100,6 +108,10 @@ def arcano_pessoal(n_nome=None, conn=None):
     if not n_nome: encerrar_jogo(connection)
 
 def missao_vida(n_data=None, conn=None):
+    """
+    Vê qual é a missão de vida da pessoa através de um Arcano.
+    """
+
     if n_data and conn:
         num = str(n_data) #se já tiver calculado
         connection = conn
@@ -121,6 +133,10 @@ def missao_vida(n_data=None, conn=None):
     if not n_data: encerrar_jogo(connection)
 
 def dons_passados(n_nome=None, n_data=None, conn=None):
+    """
+    Vê quais são os dons trazidos de vidas passadas para a atual encarnação da pessoa através de um Arcano.
+    """
+
     if n_nome and n_data and conn:
         num_missao = str(n_nome) + str(n_data) #se já tiver calculado
         connection = conn
@@ -144,6 +160,10 @@ def dons_passados(n_nome=None, n_data=None, conn=None):
     if not n_nome and not n_data: encerrar_jogo(connection)
 
 def espelho(n_dia=None, conn=None):
+    """
+    Vê qual é o Arcano espelho da pessoa, que indica como as pessoas te veem, a primeira impressão que elas têm de você.
+    """
+
     if n_dia and conn:
         num = str(n_dia) #se já tiver calculado
         connection = conn
