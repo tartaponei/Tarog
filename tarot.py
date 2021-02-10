@@ -110,19 +110,19 @@ def arcano_espelho():
         for linha in connection.execute("SELECT id, nome FROM cartas"):
             cartas.append(linha)
         n = 78
-        path = "./img/cards"
+        path = "./img/cards/tarot"
 
     elif resp == 2: 
-        for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+        for linha in connection.execute("SELECT cartas.id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
             cartas.append(linha)
         n = 22
-        path = "./img/cards/major"
+        path = "./img/cards/tarot/major"
 
     elif resp == 3: 
         for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
             cartas.append(linha)
         n = 56
-        path = "./img/cards/minor"
+        path = "./img/cards/tarot/minor"
 
     shuffle(cartas)
     indice = randint(0, n-1)
@@ -137,10 +137,10 @@ def arcano_espelho():
                 if imagem.endswith(".png"):
                     nome = os.path.splitext(imagem)
 
-                    if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                    if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                     else: pasta = "minor"
 
-                    if int(nome[0][:2]) == int(c_id)-1: img = Image.open("./img/cards/{}/{}" .format(pasta, imagem)) #se o número no nome do arquivo bater com o id-1 (pq no banco tá +1), ele pega essa imagem
+                    if int(nome[0][:2]) == int(c_id)-1: img = Image.open("./img/cards/tarot/{}/{}" .format(pasta, imagem)) #se o número no nome do arquivo bater com o id-1 (pq no banco tá +1), ele pega essa imagem
     else: #se for só os maiores ou só os menores ele vê só as subpastas
         for imagem in os.listdir(path):
             nome = os.path.splitext(imagem)
@@ -179,7 +179,7 @@ def elementos():
 
     #pega as imagens e guarda no vetor:
     for numero in numeros:
-        path = "./img/cards/minor"
+        path = "./img/cards/tarot/minor"
         c_id = cartas[numero][0] #id da carta em questão
 
         for imagem in os.listdir(path):
@@ -234,7 +234,7 @@ def mandala_tres():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -242,7 +242,7 @@ def mandala_tres():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -295,7 +295,7 @@ def mandala_cinco():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -303,7 +303,7 @@ def mandala_cinco():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -376,7 +376,7 @@ def cruz_celta():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -384,7 +384,7 @@ def cruz_celta():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -454,7 +454,7 @@ def taca_amor():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -462,7 +462,7 @@ def taca_amor():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -524,7 +524,7 @@ def templo_afrodite():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -532,7 +532,7 @@ def templo_afrodite():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -591,7 +591,7 @@ def carater():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -599,7 +599,7 @@ def carater():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 
@@ -652,7 +652,7 @@ def peladan():
 
     #pega as imagens e guarda no vetor
     for numero in numeros:
-        path = "./img/cards"
+        path = "./img/cards/tarot"
         c_id = cartas[numero][0] #id da carta em questão
 
         for _, _, files in os.walk(path):
@@ -660,7 +660,7 @@ def peladan():
                     if imagem.endswith(".png"):
                         nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/major"): pasta = "major"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
                         else: pasta = "minor"
 
                         if int(nome[0][:2]) == int(c_id)-1: 

@@ -1,19 +1,16 @@
 import os
 from PIL import Image
 
-path = "./img/cards"
+path = "./img/cards/lenormand"
 
 for _, _, files in os.walk(path):
         for imagem in files:
             if imagem.endswith(".png"):
                 nome = os.path.splitext(imagem)
 
-                if imagem in os.listdir("./img/cards/major"): pasta = "major"
-                else: pasta = "minor"
-
-                img = Image.open("{}/{}/{}" .format(path, pasta, imagem))
+                img = Image.open("{}/{}" .format(path, imagem))
                 resized = img.resize((300, 518), Image.LANCZOS)
-                resized.save("{}/{}/{}" .format(path, pasta, imagem))
+                resized.save("{}/{}" .format(path, imagem))
 
 print("feito")
 
