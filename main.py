@@ -87,8 +87,9 @@ def main():
                 elif opcao == 3: lenormand.sim_nao()
                 elif opcao == 4: lenormand.conselho_dia()
                 elif opcao == 5: lenormand.pass_pres_fut()
-                elif opcao == 6: pass
-                else: pass
+                elif opcao == 6: lenormand.cinco_cartas()
+                elif opcao == 7: lenormand.sete_cartas()
+                else:
 
         elif opcao == 3: #numerologia
             while opcao != 0:

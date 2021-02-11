@@ -173,7 +173,57 @@ def sim_nao():
     encerrar_jogo(connection)
 
 def conselho_dia():
-    pass
+    """Método da Carta + Conselho do Dia
+    2 cartas que mostram, respectivamente, a energia geral do dia e o conselho para o dia (o que fazer ou o que não fazer).
+    """
+
+    template = Image.open("./img/templates/2-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    pos_1 = (91, 93)
+    pos_2 = (507, 93)
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    print(Fore.BLUE + "\n--> CARTA E CONSELHO DO DIA <--\n")
+
+    cursor.execute("SELECT id, nome FROM lenormand")
+    cartas = cursor.fetchall()
+
+    numeros = sample(range(1, 36), 2)
+
+    #pega a imagem
+    path = "./img/cards/lenormand"
+
+    imagens = []
+
+    for numero in numeros:
+        path = "./img/cards/lenormand"
+        c_id = cartas[numero][0] #id da carta em questão
+
+        for imagem in os.listdir(path):
+            nome = os.path.splitext(imagem)
+
+            if int(nome[0][:2]) == int(c_id):
+                img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                imagens.append(img)
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "ENERGIA DO DIA"
+        else: r = "CONSELHO"
+        
+        print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+    
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        if i == 0: copy_template.paste(imagens[i], pos_1)
+        else: copy_template.paste(imagens[i], pos_2)
+
+    copy_template.show()
+
+    encerrar_jogo(connection)
 
 def pass_pres_fut():
     """Método Passado, Presente e Futuro.
@@ -265,3 +315,132 @@ def pass_pres_fut():
 
     encerrar_jogo(connection)
 
+def cinco_cartas():
+    """Método para Solução de Problemas
+    5 cartas que mostram, respectivamente, como o problema se encontra atualmente, atos do passado que resultaram ou influenciaram no presente, tendências do futuro próximo, algo oculto em meio a problema que a pessoa não sabe, e a solução/conselho para resolver o problema.
+    """
+
+    template = Image.open("./img/templates/5-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    pos_1 = (88, 116)
+    pos_2 = (428, 116)
+    pos_3 = (768, 116)
+    pos_4 = (1104, 116)
+    pos_5 = (1441, 116)
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    print(Fore.YELLOW + "\n--> CINCO CARTAS (SOLUÇÃO DE PROBLEMAS) <--\n")
+
+    cursor.execute("SELECT id, nome FROM lenormand")
+    cartas = cursor.fetchall()
+
+    numeros = sample(range(1, 36), 5)
+
+    #pega a imagem
+    path = "./img/cards/lenormand"
+
+    imagens = []
+
+    for numero in numeros:
+        path = "./img/cards/lenormand"
+        c_id = cartas[numero][0] #id da carta em questão
+
+        for imagem in os.listdir(path):
+            nome = os.path.splitext(imagem)
+
+            if int(nome[0][:2]) == int(c_id):
+                img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                imagens.append(img)
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "PRESENTE"
+        elif numero[0] == 1: r = "PASSADO"
+        elif numero[0] == 2: r = "FUTURO PRÓXIMO (CARTA CENTRAL)"
+        elif numero[0] == 3: r = "OCULTO"
+        else: r = "SOLUÇÃO"
+        
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+    
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        if i == 0: copy_template.paste(imagens[i], pos_1)
+        elif i == 1: copy_template.paste(imagens[i], pos_2)
+        elif i == 2: copy_template.paste(imagens[i], pos_3)
+        elif i == 3: copy_template.paste(imagens[i], pos_4)
+        else: copy_template.paste(imagens[i], pos_5)
+
+    copy_template.show()
+
+    encerrar_jogo(connection)
+
+def sete_cartas():
+    """Método para Entendimento do Presente
+    7 cartas para visão mais profunda da situação atual, que mostram, respectivamente, passado que resultou ou influencou no presente, situação no atual momento, tendências do futuro próximo, resposta propriamente dita para a pergunta, energias da situação, esperanças/medos da pessoa quanto à situação, e resultado final da situação.
+    """
+
+    template = Image.open("./img/templates/7-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    pos_1 = (70, 748)
+    pos_2 = (381, 447)
+    pos_3 = (694, 310)
+    pos_4 = (1006, 104)
+    pos_5 = (1321, 310)
+    pos_6 = (1633, 467)
+    pos_7 = (1943, 748)
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    print(Fore.YELLOW + "\n--> SETE CARTAS (VISÃO MAIS PROFUNDA DA SITUAÇÃO) <--\n")
+
+    cursor.execute("SELECT id, nome FROM lenormand")
+    cartas = cursor.fetchall()
+
+    numeros = sample(range(1, 36), 7)
+
+    #pega a imagem
+    path = "./img/cards/lenormand"
+
+    imagens = []
+
+    for numero in numeros:
+        path = "./img/cards/lenormand"
+        c_id = cartas[numero][0] #id da carta em questão
+
+        for imagem in os.listdir(path):
+            nome = os.path.splitext(imagem)
+
+            if int(nome[0][:2]) == int(c_id):
+                img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                imagens.append(img)
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "PASSADO"
+        elif numero[0] == 1: r = "PRESENTE"
+        elif numero[0] == 2: r = "FUTURO PRÓXIMO"
+        elif numero[0] == 3: r = "RESPOSTA (CARTA CENTRAL)"
+        elif numero[0] == 4: r = "ENERGIAS"
+        elif numero[0] == 5: r = "MEDOS E ESPERANÇAS"
+        else: r = "RESULTADO FINAL"
+        
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+    
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        if i == 0: copy_template.paste(imagens[i], pos_1)
+        elif i == 1: copy_template.paste(imagens[i], pos_2)
+        elif i == 2: copy_template.paste(imagens[i], pos_3)
+        elif i == 3: copy_template.paste(imagens[i], pos_4)
+        elif i == 4: copy_template.paste(imagens[i], pos_5)
+        elif i == 5: copy_template.paste(imagens[i], pos_6)
+        else: copy_template.paste(imagens[i], pos_7)
+
+    copy_template.show()
+
+    encerrar_jogo(connection)
