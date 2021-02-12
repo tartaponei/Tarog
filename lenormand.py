@@ -44,7 +44,7 @@ def jogo_personalizado():
 
 def mesa_real():
     """Método Mesa Real.
-    36 cartas (o baralho inteiro) para uma visão geral da vida da pessoa, levando-se em consideração as casas de acordo com o número das cartas (casa 1 = casa do Cavaleiro, casa 2 =  casa do Trevo, etc).
+    36 cartas (o baralho inteiro) para uma visão geral da vida da pessoa, levando-se em consideração as casas de acordo com o número das cartas (casa 1 = casa do Cavaleiro, casa 2 = casa do Trevo, etc).
     """
 
     template = Image.open("./img/templates/mesa-real.png")
