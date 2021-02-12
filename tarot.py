@@ -3,28 +3,13 @@ import os
 from PIL import Image
 from random import shuffle, randint, sample
 from colorama import init, Fore
+from common_functions import comecar_jogo, encerrar_jogo, instrucoes
 
 init(autoreset=True)
 
 TODOS = range(0, 78)
 MENORES = range(0, 56)
 MAIORES = range(0, 22)
-
-def comecar_jogo(personalizado=None):
-    """Começo do jogo. Abertura da conexão com o banco"""
-
-    connection = sqlite3.connect("database.db")
-
-    if not personalizado:
-        cursor = connection.cursor()
-        return connection, cursor
-    else: return connection
-
-def encerrar_jogo(connection):
-    """Encerramento do jogo, fechamento da conexão com o banco."""
-
-    connection.close()
-    input("\nFim do jogo.\nAperte Enter para continuar...")
 
 ##
 
@@ -81,6 +66,8 @@ def jogo_personalizado():
             cartas.append(linha[0])
         jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
 
+    instrucoes(n_cartas)
+
     shuffle(cartas)
     print(Fore.CYAN + "\n--> JOGO DE {} {}, USANDO {} <--\n" .format(n_cartas, n, jogo))
 
@@ -123,6 +110,8 @@ def arcano_espelho():
             cartas.append(linha)
         n = 56
         path = "./img/cards/tarot/minor"
+
+    instrucoes(1)
 
     shuffle(cartas)
     indice = randint(0, n-1)
@@ -168,9 +157,9 @@ def elementos():
 
     connection, cursor = comecar_jogo()
 
-    print("\nAS CARTAS QUE SAÍRAM SÃO (VEJA OS NAIPES APENAS):")
-
     numeros = sample(MENORES, 4)
+
+    instrucoes(4, elementos=True)
 
     cursor.execute("SELECT cartas.id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'")
     cartas = cursor.fetchall()
@@ -188,6 +177,8 @@ def elementos():
             if int(nome[0][:2]) == int(c_id)-1:
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                 imagens.append(img)
+    
+    print("\nAS CARTAS QUE SAÍRAM SÃO (VEJA OS NAIPES APENAS):")
 
     for numero in numeros:
         carta = cartas[numero][1]
@@ -223,10 +214,10 @@ def mandala_tres():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.YELLOW + "\n--> MANDALA DE 3 <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(3)
 
     numeros = sample(TODOS, 3)
 
@@ -249,6 +240,8 @@ def mandala_tres():
                             img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                             imagens.append(img)
 
+    print(Fore.YELLOW + "\n--> MANDALA DE 3 <--\n")
+
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -270,7 +263,7 @@ def mandala_tres():
 
 def mandala_cinco():
     """Método Manda de 5.
-    5 Arcanos que representam, respecitvamente, Situação Atual, Influência Externa, Oposição, Favorecimento e Resultado. Uma 6ª carta pode ser tirada como Mensagem.
+    5 Arcanos que representam, respecitvamente, Situação Atual, Influência Externa, Oposição, Favorecimento, Resultado e Conselho.
     Para perguntas objetivas e bem formuladas."""
 
     template = Image.open("./img/templates/mandala-5.png")
@@ -284,10 +277,10 @@ def mandala_cinco():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.YELLOW + "\n--> MANDALA DE 5 <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(6)
 
     numeros = sample(TODOS, 6)
 
@@ -310,6 +303,8 @@ def mandala_cinco():
                             img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                             imagens.append(img)
 
+    print(Fore.YELLOW + "\n--> MANDALA DE 5 <--\n")
+    
     for numero in enumerate(numeros):
         """if numero[0] < 5:"""
         carta = cartas[numero[1]][1]
@@ -365,10 +360,10 @@ def cruz_celta():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.BLUE + "\n--> CRUZ CELTA <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(10)
 
     numeros = sample(TODOS, 10)
 
@@ -393,6 +388,8 @@ def cruz_celta():
 
     imagens[1] = imagens[1].rotate(90,expand=True) #gira a carta 2
 
+    print(Fore.BLUE + "\n--> CRUZ CELTA <--\n")
+    
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -443,10 +440,10 @@ def taca_amor():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.MAGENTA + "\n--> TAÇA DO AMOR <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(7)
 
     numeros = sample(TODOS, 7)
 
@@ -469,6 +466,8 @@ def taca_amor():
                             img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                             imagens.append(img)
 
+    print(Fore.MAGENTA + "\n--> TAÇA DO AMOR <--\n")
+    
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -513,10 +512,10 @@ def templo_afrodite():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.MAGENTA + "\n--> TEMPLO DE AFRODITE <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(7)
 
     numeros = sample(TODOS, 7)
 
@@ -539,6 +538,8 @@ def templo_afrodite():
                             img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                             imagens.append(img)
 
+    print(Fore.MAGENTA + "\n--> TEMPLO DE AFRODITE <--\n")
+    
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -580,10 +581,10 @@ def carater():
 
     connection, cursor = comecar_jogo()
 
-    print(Fore.GREEN + "\n--> MÉTODO DO CARÁTER <--\n")
-
     cursor.execute("SELECT id, nome FROM cartas")
     cartas = cursor.fetchall()
+
+    instrucoes(4)
 
     numeros = sample(TODOS, 4)
 
@@ -606,6 +607,8 @@ def carater():
                             img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
                             imagens.append(img)
 
+    print(Fore.GREEN + "\n--> MÉTODO DO CARÁTER <--\n")
+    
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -629,7 +632,7 @@ def carater():
 
 def peladan():
     """Método Peladán.
-    5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e Síntese/Consulente. A Síntese é obtida ou na hora da escolha das cartas ou através da soma dos valores numéricos dos Arcanos do jogo e redução teosófica (se necessário), resultando num Arcano Maior nesse último caso.
+    5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e Síntese/Consulente.
     Para perguntas objetivas, bem formuladas e com tempo determinado."""
 
     template = Image.open("./img/templates/peladan.png")
@@ -647,6 +650,7 @@ def peladan():
 
     numeros = sample(TODOS, 5) #pega 5
 
+    instrucoes(5)
 
     imagens = []
 

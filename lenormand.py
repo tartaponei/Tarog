@@ -3,26 +3,11 @@ import os
 from PIL import Image
 from random import shuffle, randint, sample
 from colorama import init, Fore
+from common_functions import comecar_jogo, encerrar_jogo, instrucoes
 
 init(autoreset=True)
 
 TODOS = [*range(0, 36)]
-
-def comecar_jogo(personalizado=None):
-    """Começo do jogo. Abertura da conexão com o banco"""
-
-    connection = sqlite3.connect("database.db")
-
-    if not personalizado:
-        cursor = connection.cursor()
-        return connection, cursor
-    else: return connection
-
-def encerrar_jogo(connection):
-    """Encerramento do jogo, fechamento da conexão com o banco."""
-
-    connection.close()
-    input("\nFim do jogo.\nAperte Enter para continuar...")
 
 ##
 
@@ -43,6 +28,8 @@ def jogo_personalizado():
 
     for linha in connection.execute("SELECT nome FROM lenormand"):
         cartas.append(linha[0])
+
+    instrucoes(n_cartas)
 
     shuffle(cartas)
     print(Fore.CYAN + "\n--> JOGO DE {} {} <--\n" .format(n_cartas, n))
@@ -107,6 +94,8 @@ def mesa_real():
 
     connection, cursor = comecar_jogo()
 
+    instrucoes(36)
+
     print(Fore.GREEN + "\n--> MESA REAL <--\n")
 
     cursor.execute("SELECT id, nome FROM lenormand")
@@ -149,6 +138,8 @@ def sim_nao():
     connection = comecar_jogo(personalizado=True)
     cartas = []
 
+    instrucoes(1)
+
     print(Fore.GREEN + "\n--> SIM OU NÃO / CARTA DO DIA <--\n")
 
     for linha in connection.execute("SELECT id, nome FROM lenormand"):
@@ -174,7 +165,7 @@ def sim_nao():
 
 def conselho_dia():
     """Método da Carta + Conselho do Dia
-    2 cartas que mostram, respectivamente, a energia geral do dia e o conselho para o dia (o que fazer ou o que não fazer).
+    2 cartas que mostram, respectivamente, a Energia geral do dia e o Conselho para o dia (o que fazer ou o que não fazer).
     """
 
     template = Image.open("./img/templates/2-cartas.png")
@@ -184,6 +175,8 @@ def conselho_dia():
 
     connection, cursor = comecar_jogo()
     cartas = []
+
+    instrucoes(1)
 
     print(Fore.BLUE + "\n--> CARTA E CONSELHO DO DIA <--\n")
 
@@ -250,6 +243,8 @@ def pass_pres_fut():
     if resp == 2: 
         template = Image.open("./img/templates/3-cartas.png")
         copy_template = template.copy()
+
+    instrucoes(3)
 
     print(Fore.GREEN + "\n--> PASSADO, PRESENTE, FUTURO <--\n")
 
@@ -331,6 +326,8 @@ def cinco_cartas():
     connection, cursor = comecar_jogo()
     cartas = []
 
+    instrucoes(5)
+
     print(Fore.YELLOW + "\n--> CINCO CARTAS (SOLUÇÃO DE PROBLEMAS) <--\n")
 
     cursor.execute("SELECT id, nome FROM lenormand")
@@ -379,7 +376,7 @@ def cinco_cartas():
 
 def sete_cartas():
     """Método para Entendimento do Presente
-    7 cartas para visão mais profunda da situação atual, que mostram, respectivamente, passado que resultou ou influencou no presente, situação no atual momento, tendências do futuro próximo, resposta propriamente dita para a pergunta, energias da situação, esperanças/medos da pessoa quanto à situação, e resultado final da situação.
+    7 cartas para visão mais profunda da situação atual, que mostram, respectivamente, Passado que resultou ou influencou no Presente, Situação no Atual Momento, tendências do Futuro Próximo, Resposta propriamente dita para a pergunta, Energias da situação, Esperanças/Medos da pessoa quanto à situação, e Resultado Final da situação.
     """
 
     template = Image.open("./img/templates/7-cartas.png")
@@ -394,6 +391,8 @@ def sete_cartas():
 
     connection, cursor = comecar_jogo()
     cartas = []
+
+    instrucoes(7)
 
     print(Fore.YELLOW + "\n--> SETE CARTAS (VISÃO MAIS PROFUNDA DA SITUAÇÃO) <--\n")
 
