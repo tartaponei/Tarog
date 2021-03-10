@@ -150,10 +150,11 @@ def elementos():
 
     template = Image.open("./img/templates/4-elementos.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (81, 122)
+    posicoes = [(81, 122), (403, 122), (726, 122), (1048, 122)]
+    """pos_1 = (81, 122)
     pos_2 = (403, 122)
     pos_3 = (726, 122)
-    pos_4 = (1048, 122)
+    pos_4 = (1048, 122)"""
 
     connection, cursor = comecar_jogo()
 
@@ -192,10 +193,7 @@ def elementos():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        else: copy_template.paste(imagens[i], pos_4)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -208,9 +206,7 @@ def mandala_tres():
 
     template = Image.open("./img/templates/mandala-3.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (56, 53)
-    pos_2 = (376, 53)
-    pos_3 = (700, 53)
+    posicoes =[(56, 53), (376, 53), (700, 53)]
 
     connection, cursor = comecar_jogo()
 
@@ -253,9 +249,7 @@ def mandala_tres():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        else: copy_template.paste(imagens[i], pos_3)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -268,12 +262,7 @@ def mandala_cinco():
 
     template = Image.open("./img/templates/mandala-5.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (545, 603)
-    pos_2 = (545, 64)
-    pos_3 = (545, 1152)
-    pos_4 = (140, 603)
-    pos_5 = (945, 603)
-    pos_6 = (1256, 1357)
+    posicoes = [(545, 603), (545, 64), (545, 1152), (140, 603), (945, 603), (1256, 1357)]
 
     connection, cursor = comecar_jogo()
 
@@ -318,23 +307,10 @@ def mandala_cinco():
 
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
-        """else:
-            resp = ""
-            while resp != "não" and resp != "sim":
-                resp = input("\nDeseja tirar uma Mensagem? ")
-
-            if resp == "sim":
-                msg = cartas[numero[1]][0]
-                print(Fore.YELLOW + "\nMENSAGEM:" + Fore.RESET + msg)"""
-
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        elif i == 4: copy_template.paste(imagens[i], pos_5)
-        else: copy_template.paste(imagens[i], pos_6)
+        copy_template.paste(imagens[i], posicoes[i])
+
 
     copy_template.show()
 
@@ -347,16 +323,7 @@ def cruz_celta():
 
     template = Image.open("./img/templates/cruz-celta.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (630, 977)
-    pos_2 = (525, 1083)
-    pos_3 = (630, 397)
-    pos_4 = (1082, 977)
-    pos_5 = (630, 1557)
-    pos_6 = (172, 977)
-    pos_7 = (1505, 1779)
-    pos_8 = (1505, 1240)
-    pos_9 = (1505, 693)
-    pos_10 = (1505, 143)
+    posicoes = [(630, 977), (525, 1083), (630, 397), (1082, 977), (630, 1557), (172, 977), (1505, 1779), (1505, 1240), (1505, 693), (1505, 143)]
 
     connection, cursor = comecar_jogo()
 
@@ -408,16 +375,7 @@ def cruz_celta():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        elif i == 4: copy_template.paste(imagens[i], pos_5)
-        elif i == 5: copy_template.paste(imagens[i], pos_6)
-        elif i == 6: copy_template.paste(imagens[i], pos_7)
-        elif i == 7: copy_template.paste(imagens[i], pos_8)
-        elif i == 8: copy_template.paste(imagens[i], pos_9)
-        else: copy_template.paste(imagens[i], pos_10)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -430,13 +388,7 @@ def taca_amor():
 
     template = Image.open("./img/templates/taca-amor.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (699, 1105)
-    pos_2 = (906, 548)
-    pos_3 = (493, 548)
-    pos_4 = (1268, 102)
-    pos_5 = (131, 101)
-    pos_6 = (699, 1650)
-    pos_7 = (699, 2197)
+    posicoes = [(699, 1105), (906, 548), (493, 548), (1268, 102), (131, 101), (699, 1650), (699, 2197)]
 
     connection, cursor = comecar_jogo()
 
@@ -483,13 +435,7 @@ def taca_amor():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        elif i == 4: copy_template.paste(imagens[i], pos_5)
-        elif i == 5: copy_template.paste(imagens[i], pos_6)
-        else: copy_template.paste(imagens[i], pos_7)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -502,13 +448,7 @@ def templo_afrodite():
 
     template = Image.open("./img/templates/templo-afrodite.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (133, 63)
-    pos_2 = (133, 604)
-    pos_3 = (133, 1150)
-    pos_4 = (958, 63)
-    pos_5 = (958, 604)
-    pos_6 = (958, 1150)
-    pos_7 = (547, 604)
+    posicoes = [(133, 63), (133, 604), (133, 1150), (958, 63), (958, 604), (958, 1150), (547, 604)]
 
     connection, cursor = comecar_jogo()
 
@@ -555,13 +495,7 @@ def templo_afrodite():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        elif i == 4: copy_template.paste(imagens[i], pos_5)
-        elif i == 5: copy_template.paste(imagens[i], pos_6)
-        else: copy_template.paste(imagens[i], pos_7)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -574,10 +508,7 @@ def carater():
 
     template = Image.open("./img/templates/carater.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (94, 100)
-    pos_2 = (94, 712)
-    pos_3 = (539, 100)
-    pos_4 = (539, 712)
+    posicoes = [(94, 100), (94, 712), (539, 100), (539, 712)]
 
     connection, cursor = comecar_jogo()
 
@@ -621,10 +552,7 @@ def carater():
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        else: copy_template.paste(imagens[i], pos_4)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -637,11 +565,7 @@ def peladan():
 
     template = Image.open("./img/templates/peladan.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_5 = (444, 591)
-    pos_3 = (444, 61)
-    pos_4 = (444, 1127)
-    pos_1 = (46, 591)
-    pos_2 = (835, 591)
+    posicoes = [(444, 591), (444, 61), (444, 1127), (46, 591), (835, 591)]
 
     connection, cursor = comecar_jogo()
 
@@ -686,11 +610,7 @@ def peladan():
 
         #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        else: copy_template.paste(imagens[i], pos_5)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 

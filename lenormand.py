@@ -49,48 +49,11 @@ def mesa_real():
 
     template = Image.open("./img/templates/mesa-real.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (142, 81)
-    pos_2 = (472, 81)
-    pos_3 = (818, 81)
-    pos_4 = (1154, 81)
-    pos_5 = (1490, 81)
-    pos_6 = (1828, 81)
-    pos_7 = (2165, 81)
-    pos_8 = (2504, 81)
-
-    pos_9 = (142, 641)
-    pos_10 = (472, 641)
-    pos_11 = (818, 641)
-    pos_12 = (1154, 641)
-    pos_13 = (1490, 641)
-    pos_14 = (1828, 641)
-    pos_15 = (2165, 641)
-    pos_16 = (2504, 641)
-
-    pos_17 = (142, 1205)
-    pos_18 = (472, 1205)
-    pos_19 = (818, 1205)
-    pos_20 = (1154, 1205)
-    pos_21 = (1490, 1205)
-    pos_22 = (1828, 1205)
-    pos_23 = (2165, 1205)
-    pos_24 = (2504, 1205)
-
-    pos_25 = (142, 1775)
-    pos_26 = (472, 1775)
-    pos_27 = (818, 1775)
-    pos_28 = (1154, 1775)
-    pos_29 = (1490, 1775)
-    pos_30 = (1828, 1775)
-    pos_31 = (2165, 1775)
-    pos_32 = (2504, 1775)
-
-    pos_33 = (818, 2330)
-    pos_34 = (1154, 2330)
-    pos_35 = (1490, 2330)
-    pos_36 = (1828, 2330)
-
-    posicoes = [pos_1, pos_2, pos_3, pos_4, pos_5, pos_6, pos_7, pos_8, pos_9, pos_10, pos_11, pos_12, pos_13, pos_14, pos_15, pos_16, pos_17, pos_18, pos_19, pos_20, pos_21, pos_22, pos_23, pos_24, pos_25, pos_26, pos_27, pos_28, pos_29, pos_30, pos_31, pos_32, pos_33, pos_34, pos_35, pos_36]
+    posicoes = [(142, 81), (472, 81), (818, 81), (1154, 81), (1490, 81), (1828, 81), (2165, 81), (2504, 81),
+        (142, 641), (472, 641), (818, 641), (1154, 641), (1490, 641), (1828, 641), (2165, 641), (2504, 641),
+        (142, 1205), (472, 1205), (818, 1205), (1154, 1205), (1490, 1205), (1828, 1205), (2165, 1205),(2504, 1205),
+        (142, 1775), (472, 1775), (818, 1775), (1154, 1775), (1490, 1775), (1828, 1775), (2165, 1775), (2504, 1775),
+    (818, 2330), (1154, 2330), (1490, 2330), (1828, 2330)]
 
     connection, cursor = comecar_jogo()
 
@@ -170,8 +133,7 @@ def conselho_dia():
 
     template = Image.open("./img/templates/2-cartas.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (91, 93)
-    pos_2 = (507, 93)
+    posicoes = [(91, 93), (507, 93)]
 
     connection, cursor = comecar_jogo()
     cartas = []
@@ -211,8 +173,7 @@ def conselho_dia():
     
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        else: copy_template.paste(imagens[i], pos_2)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -317,11 +278,7 @@ def cinco_cartas():
 
     template = Image.open("./img/templates/5-cartas.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (88, 116)
-    pos_2 = (428, 116)
-    pos_3 = (768, 116)
-    pos_4 = (1104, 116)
-    pos_5 = (1441, 116)
+    posicoes = [(88, 116), (428, 116), (768, 116), (1104, 116), (1441, 116)]
 
     connection, cursor = comecar_jogo()
     cartas = []
@@ -364,11 +321,7 @@ def cinco_cartas():
     
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        else: copy_template.paste(imagens[i], pos_5)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
@@ -381,13 +334,7 @@ def sete_cartas():
 
     template = Image.open("./img/templates/7-cartas.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    pos_1 = (70, 748)
-    pos_2 = (381, 447)
-    pos_3 = (694, 310)
-    pos_4 = (1006, 104)
-    pos_5 = (1321, 310)
-    pos_6 = (1633, 467)
-    pos_7 = (1943, 748)
+    posicoes = [(70, 748), (381, 447), (694, 310), (1006, 104), (1321, 310), (1633, 467), (1943, 748)]
 
     connection, cursor = comecar_jogo()
     cartas = []
@@ -432,13 +379,7 @@ def sete_cartas():
     
     #montagem da imagem do jogo
     for i in range(len(imagens)):
-        if i == 0: copy_template.paste(imagens[i], pos_1)
-        elif i == 1: copy_template.paste(imagens[i], pos_2)
-        elif i == 2: copy_template.paste(imagens[i], pos_3)
-        elif i == 3: copy_template.paste(imagens[i], pos_4)
-        elif i == 4: copy_template.paste(imagens[i], pos_5)
-        elif i == 5: copy_template.paste(imagens[i], pos_6)
-        else: copy_template.paste(imagens[i], pos_7)
+        copy_template.paste(imagens[i], posicoes[i])
 
     copy_template.show()
 
