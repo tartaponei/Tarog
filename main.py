@@ -24,6 +24,7 @@ init(autoreset=True)
 8- Templo de Afrodite
 9- Caráter
 10- Peladán
+11- 7 Chaves
 """
 
 """
@@ -47,7 +48,7 @@ init(autoreset=True)
 """
 
 def apres_jogo():
-    return int(input("\nDigite " + Fore.GREEN + "1 se quiser continuar com este método" + Fore.WHITE + " ou " + Fore.RED + "0 se quiser voltar: "))
+    return int(input("\nDigite " + Fore.GREEN + "1 se quiser continuar com este método" + Fore.WHITE + " ou " + Fore.RED + "0 se quiser voltar" + Fore.RESET +": "))
 
 def main():
     print("\'")
@@ -65,7 +66,7 @@ def main():
             opcao = 1
             while opcao != 0:
                 print("\nEscolha um método:")
-                print(Fore.RED + "\n0- Voltar\n" + Fore.CYAN + "1 - Jogo Personalizado\n" + Fore.GREEN + "2- Arcano Espelho (1 carta)\n3- Elementos Desarmonizados (4 cartas)\n" + Fore.YELLOW + "4- Mandala de 3 (3 cartas)\n5- Mandala de 5 (6 cartas)\n" + Fore.BLUE + "6- Cruz Celta (10 cartas)\n" + Fore.MAGENTA + "7- Taça do Amor (7 cartas)\n8- Templo de Afrodite (7 cartas)\n" + Fore.GREEN + "9- Caráter (4 cartas)\n" + Fore.YELLOW + "10- Peladán (5 cartas)")
+                print(Fore.RED + "\n0- Voltar\n" + Fore.CYAN + "1 - Jogo Personalizado\n" + Fore.GREEN + "2- Arcano Espelho (1 carta)\n3- Elementos Desarmonizados (4 cartas)\n" + Fore.YELLOW + "4- Mandala de 3 (3 cartas)\n5- Mandala de 5 (6 cartas)\n" + Fore.BLUE + "6- Cruz Celta (10 cartas)\n" + Fore.MAGENTA + "7- Taça do Amor (7 cartas)\n8- Templo de Afrodite (7 cartas)\n" + Fore.GREEN + "9- Caráter (4 cartas)\n" + Fore.YELLOW + "10- Peladán (5 cartas)\n11- 7 Chaves (7 cartas)")
                 opcao = int(input("\nDigite o número: "))
 
                 if opcao == 0: opcao1 = 1
@@ -125,10 +126,16 @@ def main():
                     if a == 1: tarot.carater()
 
                 elif opcao == 10:
-                    print(Fore.GREEN + "\n-> 5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e \nSíntese/Consulente. Para perguntas objetivas, bem formuladas e com tempo determinado.")
+                    print(Fore.YELLOW + "\n-> 5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e \nSíntese/Consulente. Para perguntas objetivas, bem formuladas e com tempo determinado.")
                     a = apres_jogo()
 
                     if a == 1: tarot.peladan()
+
+                elif opcao == 11:
+                    print(Fore.YELLOW + "\n-> 7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. \nA magia precisa ter sido confirmada através de outro jogo ou método antes deste método.")
+                    a = apres_jogo()
+
+                    if a == 1: tarot.sete_chaves()
 
                 else: pass
 

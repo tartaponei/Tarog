@@ -608,7 +608,67 @@ def peladan():
 
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
 
-        #montagem da imagem do jogo
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.show()
+
+    encerrar_jogo(connection)
+
+def sete_chaves():
+    """Método das 7 Chaves.
+    7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. 
+    A magia precisa ter sido confirmada através de outro jogo ou método antes deste método."""
+
+    template = Image.open("./img/templates/7-chaves.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    posicoes = [(789, 76), (137, 604), (465, 604), (1119, 604), (1441, 604), (789, 1133), (789, 1666)]
+
+    connection, cursor = comecar_jogo()
+
+    cursor.execute("SELECT id, nome FROM cartas")
+    cartas = cursor.fetchall()
+
+    numeros = sample(TODOS, 7) #pega 7
+
+    instrucoes(7)
+
+    imagens = []
+
+    #pega as imagens e guarda no vetor
+    for numero in numeros:
+        path = "./img/cards/tarot"
+        c_id = cartas[numero][0] #id da carta em questão
+
+        for _, _, files in os.walk(path):
+                for imagem in files:
+                    if imagem.endswith(".png"):
+                        nome = os.path.splitext(imagem)
+
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                        else: pasta = "minor"
+
+                        if int(nome[0][:2]) == int(c_id)-1: 
+                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
+                            imagens.append(img)
+    
+    print(Fore.YELLOW + "\n--> 7 CHAVES <--\n")
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "INTENÇÃO DO FEITIÇO"
+        elif numero[0] == 1: r = "FALANGE QUE AJUDA NO FEITIÇO"
+        elif numero[0] == 2: r = "INTENSIDADE DO FEITIÇO"
+        elif numero[0] == 3: r = "O ANTIFEITIÇO"
+        elif numero[0] == 4: r = "O QUE FAZER ATÉ QUE SE RESOLVA"
+        elif numero[0] == 5: r = "ÁREA DA VIDA AFETADA"
+        else: r = "COMO RESOLVER (CONSELHO)"
+
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+
+    #montagem da imagem do jogo
     for i in range(len(imagens)):
         copy_template.paste(imagens[i], posicoes[i])
 
