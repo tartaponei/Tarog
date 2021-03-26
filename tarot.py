@@ -565,7 +565,7 @@ def peladan():
 
     template = Image.open("./img/templates/peladan.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    posicoes = [(444, 591), (444, 61), (444, 1127), (46, 591), (835, 591)]
+    posicoes = [(46, 591), (835, 591), (444, 61), (444, 1127), (444, 591)]
 
     connection, cursor = comecar_jogo()
 
