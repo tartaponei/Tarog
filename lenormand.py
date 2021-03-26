@@ -3,7 +3,7 @@ import os
 from PIL import Image
 from random import shuffle, randint, sample
 from colorama import init, Fore
-from common_functions import comecar_jogo, encerrar_jogo, instrucoes
+from common_functions import comecar_jogo, encerrar_jogo, instrucoes, salvar_jogo
 
 init(autoreset=True)
 
@@ -34,11 +34,16 @@ def jogo_personalizado():
     shuffle(cartas)
     print(Fore.CYAN + "\n--> JOGO DE {} {} <--\n" .format(n_cartas, n))
 
+    cartas_string = ""
+
     for i in range(n_cartas):
         carta = cartas[0] #pega as primeiras cartas do maço
         cartas.pop(0)
 
         print(Fore.CYAN + "CASA {}:" .format(i+1) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "CASA %s: %s | " %((i+1), carta)
+
+    salvar_jogo(cartas=cartas_string, foto=None)
 
     encerrar_jogo(connection)
 
@@ -81,16 +86,25 @@ def mesa_real():
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
                 imagens.append(img)
 
+    cartas_string = ""
+
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
         print(Fore.GREEN + "CASA {}:" .format(numero[0]+1) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "CASA %s: %s | " %((numero[0]+1), carta)
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
         if i == TODOS[i]: copy_template.paste(imagens[i], posicoes[i])
 
+    copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)
 
@@ -122,7 +136,15 @@ def sim_nao():
             img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
 
     print(Fore.GREEN + "SUA RESPOSTA OU CARTA DO DIA É:" + Fore.RESET + " {}" .format(carta))
+    cartas_string = carta
+
+    img.save("./img/jogo.png", "PNG")
     img.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)
 
@@ -163,6 +185,8 @@ def conselho_dia():
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
                 imagens.append(img)
 
+    cartas_string = ""
+
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -170,12 +194,19 @@ def conselho_dia():
         else: r = "CONSELHO"
         
         print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "%s: %s | " %(r, carta)
     
     #montagem da imagem do jogo
     for i in range(len(imagens)):
         copy_template.paste(imagens[i], posicoes[i])
 
+    copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)
 
@@ -234,6 +265,8 @@ def pass_pres_fut():
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
                 imagens.append(img)
 
+    cartas_string = ""
+
     for i, carta in enumerate(cartas_n):
         if len(numeros) == 6:
             if i == 0 or i == 2 or i == 4:
@@ -244,12 +277,14 @@ def pass_pres_fut():
                 if len(numeros) == 6: carta = carta[1] + " + " + cartas_n[i+1][1] #duas cartas por vez
 
                 print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+                cartas_string += "%s: %s | " %(r, carta)
         else:
             if i == 0: r = "PASSADO"
             elif i == 1: r = "PRESENTE"
             else: r = "FUTURO"
 
             print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta[1]))
+            cartas_string += "%s: %s | " %(r, carta[1])
 
     #montagem da imagem do jogo
     if len(numeros) == 3:
@@ -267,7 +302,13 @@ def pass_pres_fut():
             elif i == 4: copy_template.paste(imagens[i], pos_3)
             else: copy_template.paste(imagens[i], pos_6)
 
+    copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)
 
@@ -308,6 +349,7 @@ def cinco_cartas():
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
                 imagens.append(img)
 
+    cartas_string = ""
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -318,12 +360,19 @@ def cinco_cartas():
         else: r = "SOLUÇÃO"
         
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-    
+        cartas_string += "%s: %s | " %(r, carta)
+
     #montagem da imagem do jogo
     for i in range(len(imagens)):
         copy_template.paste(imagens[i], posicoes[i])
 
+    copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)
 
@@ -364,6 +413,8 @@ def sete_cartas():
                 img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
                 imagens.append(img)
 
+    cartas_string = ""
+
     for numero in enumerate(numeros):
         carta = cartas[numero[1]][1]
 
@@ -376,11 +427,18 @@ def sete_cartas():
         else: r = "RESULTADO FINAL"
         
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "%s: %s | " %(r, carta)
     
     #montagem da imagem do jogo
     for i in range(len(imagens)):
         copy_template.paste(imagens[i], posicoes[i])
 
+    copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
     encerrar_jogo(connection)

@@ -79,7 +79,6 @@ def jogo_personalizado():
 
         print(Fore.CYAN + "CASA {}:" .format(i+1) + Fore.RESET + " {}" .format(carta))
         cartas_string += "CASA %s: %s | " %((i+1), carta)
-        print(cartas_string)
 
     salvar_jogo(cartas=cartas_string, foto=None)
 
