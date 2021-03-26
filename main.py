@@ -1,6 +1,10 @@
 import tarot
 import numerology
 import lenormand
+import sqlite3
+from PIL import Image
+from io import BytesIO
+from terminaltables import SingleTable
 from colorama import init, Style, Fore
 
 init(autoreset=True)
@@ -50,7 +54,14 @@ init(autoreset=True)
 def apres_jogo():
     return int(input("\nDigite " + Fore.GREEN + "1 se quiser continuar com este método" + Fore.WHITE + " ou " + Fore.RED + "0 se quiser voltar" + Fore.RESET +": "))
 
+def criar_tabela_jogo():
+    open("jogos_db.db", "a") #cria o arquivo caso não tenha
+
+    f_conn = sqlite3.connect("jogos_db.db")
+    f_conn.execute('CREATE TABLE IF NOT EXISTS "jogos" ("id" INTEGER NOT NULL, "pergunta" TEXT(300) NOT NULL, "data" TEXT(10) NOT NULL, "hora" TEXT(5) NOT NULL, "cartas" TEXT,"mesa" BLOB, PRIMARY KEY("id" AUTOINCREMENT));')
+
 def main():
+    criar_tabela_jogo()
     print("\'")
 
     opcao1 = 1
@@ -59,7 +70,7 @@ def main():
 
     while opcao1 != 0:
         print("\nEscolha o que deseja fazer:")
-        print(Fore.RED + "\n0- Sair" + Fore.CYAN + "\n1- Jogar Tarô" + Fore.GREEN + "\n2- Jogar Baralho Cigano (Lenormand)" + Fore.YELLOW + "\n3- Numerologia Pelo Tarô")
+        print(Fore.RED + "\n0- Sair" + Fore.CYAN + "\n1- Jogar Tarô" + Fore.GREEN + "\n2- Jogar Baralho Cigano (Lenormand)" + Fore.YELLOW + "\n3- Numerologia Pelo Tarô" + Fore.BLUE + "\n4- Ver Jogos Salvos")
         opcao1 = int(input("\nDigite o número: "))
 
         if opcao1 == 1: #tarô
@@ -206,6 +217,55 @@ def main():
                 elif opcao == 4: numerology.dons_passados()
                 elif opcao == 5: numerology.espelho()
                 else: pass
+
+        elif opcao1 == 4:
+            print(Fore.MAGENTA + "\n--> ESSES SÃO OS JOGOS SALVOS:")
+            loop = 1
+
+            while loop == 1:
+                tabledata = [["NUM", "PERGUNTA", "QUANDO"]]
+
+                connection = sqlite3.connect("jogos_db.db")
+                c = connection.cursor()
+
+                for jogo in c.execute("SELECT pergunta, data, hora, id FROM jogos"):
+                    #print("%d - \"%s\" | DIA %s, ÀS %s" %(num, jogo[0], jogo[1], jogo[2]))
+                    tabledata.append([jogo[3], "\"%s\"" %(jogo[0]), "DIA %s, ÀS %s" %(jogo[1], jogo[2])])
+
+                tabela = SingleTable(tabledata)
+                tabela.inner_row_border = True
+                tabela.justify_columns = {0: 'right', 1: 'left', 2: 'center'}
+                print(tabela.table)
+
+                resp = int(input("\nDigite o " + Fore.GREEN + "número do jogo que quer ver" + Fore.WHITE + ", ou " + Fore.RED + "0 se quiser voltar" + Fore.RESET + ": "))
+
+                if resp != 0:
+                    try:
+                        jogow = connection.execute("SELECT pergunta, data, hora, mesa, cartas FROM jogos WHERE id = ?", (str(resp)))
+                    except:
+                        print("Não tem jogo com esse número. Digite outro.\n")
+                    jogo = jogow.fetchone()
+                        
+                    print(Fore.MAGENTA + "\nPERGUNTA:", jogo[0])
+                    print(Fore.MAGENTA + "DATA:", jogo[1])
+                    print(Fore.MAGENTA + "HORA:", jogo[2])
+
+                    cartas = str(jogo[4])[:-3]
+                    cartas = cartas.split(" | ")
+
+                    print(Fore.BLUE + "\n--> JOGO: <--")
+                    for carta in cartas:
+                        print(carta)
+
+                    if jogo[3]:
+                        corrected = [256+x if int(x)<0 else x for x in jogo[3]]
+
+                        img = Image.open(BytesIO(bytes(corrected)))
+                        img.show()
+
+                    connection.close()
+                    input("\nAperte Enter para voltar para o menu...")
+                loop = 0
 
     #se a pessoa quiser sair do prog
     print(Fore.MAGENTA + "\n>> OBRIGADA POR USAR :) <<")

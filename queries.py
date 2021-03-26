@@ -41,9 +41,9 @@ for img in imgs:
     connection.execute("UPDATE 'cartas' SET imagem = ? WHERE id = ?", (data, i_id))
     connection.commit()"""
 
-with open("./img/major/00-fool.png", "rb") as file:
+"""with open("./img/major/00-fool.png", "rb") as file:
     img_data = file.read()
     print(type(img_data))
 
 a = Image.open("./img/major/00-fool.png")
-print(a.mode)
+print(a.mode)"""
