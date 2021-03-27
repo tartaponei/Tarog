@@ -1,7 +1,11 @@
+#scripts
 import tarot
 import numerology
 import lenormand
+
+#packages
 import sqlite3
+import cfonts
 from PIL import Image
 from io import BytesIO
 from terminaltables import SingleTable
@@ -9,6 +13,12 @@ from colorama import init, Style, Fore
 
 init(autoreset=True)
 
+#variáveis iniciais
+TITLE = cfonts.render("-TAROG-", font='block', size=(80, 40), colors=("magenta", "yellow"), background='transparent', align='left', letter_spacing=None, line_height=1, space=True, max_length=0, gradient=None, independent_gradient=False, transition=False)
+
+WELCOME_TEXT = Fore.YELLOW + "======> BEM VINDO! <======"
+
+EXIT_TEXT = cfonts.render("OBRIGADA POR USAR :)", font='chrome', size=(80, 40), colors=("magenta", "magenta", "magenta"), background='transparent', align='left', letter_spacing=None, line_height=1, space=True, max_length=0, gradient=None, independent_gradient=False, transition=False)
 """
 0- Sair
 1- Jogar Tarô
@@ -66,7 +76,10 @@ def main():
 
     opcao1 = 1
 
-    print(Fore.MAGENTA + "\n>> BEM-VINDO AO TAROG! <<")
+    print(TITLE)
+    print(WELCOME_TEXT)
+
+    #print(Fore.MAGENTA + "\n>> BEM-VINDO AO TAROG! <<")
 
     while opcao1 != 0:
         print("\nEscolha o que deseja fazer:")
@@ -268,7 +281,7 @@ def main():
                 loop = 0
 
     #se a pessoa quiser sair do prog
-    print(Fore.MAGENTA + "\n>> OBRIGADA POR USAR :) <<")
+    print(EXIT_TEXT)
 
 if __name__ == "__main__":
     main()

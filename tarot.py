@@ -1,8 +1,11 @@
+#packages
 import sqlite3
 import os
 from PIL import Image
 from random import shuffle, randint, sample
 from colorama import init, Fore
+
+#scripts
 from common_functions import comecar_jogo, encerrar_jogo, instrucoes, salvar_jogo
 
 init(autoreset=True)
