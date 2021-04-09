@@ -147,7 +147,7 @@ def arcano_espelho():
     print(Fore.GREEN + "\n--> ARCANO ESPELHO DO DIA/SEMANA <--")
 
     print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
-    cartas_string = carta
+    cartas_string = carta + " | "
 
     img.save("./img/jogo.png", "PNG")
     img.show()
@@ -209,7 +209,7 @@ def elementos():
         else: cor = Fore.GREEN
         print(cor + carta)
 
-        cartas_string += carta
+        cartas_string += carta + " | "
 
     #montagem da imagem do jogo
     for i in range(len(imagens)):
