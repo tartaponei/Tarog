@@ -6,6 +6,7 @@ import lenormand
 #packages
 import sqlite3
 import cfonts
+from time import sleep
 from PIL import Image
 from io import BytesIO
 from terminaltables import SingleTable
@@ -76,8 +77,8 @@ def main():
 
     opcao1 = 1
 
-    print(TITLE)
-    print(WELCOME_TEXT)
+    print(TITLE) ; sleep(2)
+    print(WELCOME_TEXT) ; sleep(1)
 
     #print(Fore.MAGENTA + "\n>> BEM-VINDO AO TAROG! <<")
 
