@@ -2,6 +2,7 @@
 import tarot
 import numerology
 import lenormand
+import pythagorean
 
 #packages
 import sqlite3
@@ -24,7 +25,10 @@ EXIT_TEXT = cfonts.render("OBRIGADA POR USAR :)", font='chrome', size=(80, 40), 
 0- Sair
 1- Jogar Tarô
 2- Jogar Baralho Cigano (Lenormand)
-3- Numerologia Pelo Tarô
+3- Ver Jogos Salvos
+
+4- Numerologia Pelo Tarô
+5- Numerologia Pitagórica
 """
 
 """
@@ -77,21 +81,21 @@ def main():
 
     opcao1 = 1
 
-    print(TITLE) ; sleep(2)
+    print(TITLE) ; sleep(1)
     print(WELCOME_TEXT) ; sleep(1)
 
     #print(Fore.MAGENTA + "\n>> BEM-VINDO AO TAROG! <<")
 
     while opcao1 != 0:
         print("\nEscolha o que deseja fazer:")
-        print(Fore.RED + "\n0- Sair" + Fore.CYAN + "\n1- Jogar Tarô" + Fore.GREEN + "\n2- Jogar Baralho Cigano (Lenormand)" + Fore.YELLOW + "\n3- Numerologia Pelo Tarô" + Fore.BLUE + "\n4- Ver Jogos Salvos")
+        print(Fore.RED + "\n0- Sair" + Fore.CYAN + "\n1- Jogar Tarô" + Fore.GREEN + "\n2- Jogar Baralho Cigano (Lenormand)" + Fore.YELLOW + "\n3- Ver Jogos Salvos" + Fore.BLUE + "\n\n4- Numerologia Pelo Tarô" + Fore.MAGENTA + "\n5- Numerologia Pitagórica")
         opcao1 = int(input("\nDigite o número: "))
 
         if opcao1 == 1: #tarô
             opcao = 1
             while opcao != 0:
                 print("\nEscolha um método:")
-                print(Fore.RED + "\n0- Voltar\n" + Fore.CYAN + "1 - Jogo Personalizado\n" + Fore.GREEN + "2- Arcano Espelho (1 carta)\n3- Elementos Desarmonizados (4 cartas)\n" + Fore.YELLOW + "4- Mandala de 3 (3 cartas)\n5- Mandala de 5 (6 cartas)\n" + Fore.BLUE + "6- Cruz Celta (10 cartas)\n" + Fore.MAGENTA + "7- Taça do Amor (7 cartas)\n8- Templo de Afrodite (7 cartas)\n" + Fore.GREEN + "9- Caráter (4 cartas)\n" + Fore.YELLOW + "10- Peladán (5 cartas)\n11- 7 Chaves (7 cartas)")
+                print(Fore.RED + "\n0- Voltar\n" + Fore.CYAN + "1 - Jogo Personalizado\n" + Fore.GREEN + "2- Arcano Espelho (1 carta)\n3- Elementos Desarmonizados (4 cartas)\n" + Fore.YELLOW + "4- Mandala de 3 (3 cartas)\n5- Mandala de 5 (6 cartas)\n" + Fore.BLUE + "6- Cruz Celta (10 cartas)\n" + Fore.MAGENTA + "7- Taça do Amor (7 cartas)\n8- Templo de Afrodite (7 cartas)\n" + Fore.GREEN + "9- Caráter (4 cartas)\n" + Fore.YELLOW + "10- Peladán (5 cartas)\n11- 7 Chaves (7 cartas)\n" + Fore.GREEN + "12- Estrela / Eu Com Eu Mesmo (6 cartas)" )
                 opcao = int(input("\nDigite o número: "))
 
                 if opcao == 0: opcao1 = 1
@@ -157,11 +161,16 @@ def main():
                     if a == 1: tarot.peladan()
 
                 elif opcao == 11:
-                    print(Fore.YELLOW + "\n-> 7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. \nA magia precisa ter sido confirmada através de outro jogo ou método antes deste método.")
+                    print(Fore.YELLOW + "\n-> 7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. \nA magia precisa ter sido confirmada através de outro jogo ou método antes deste método. Créditos ao queridíssimo Wayner Lyra.")
                     a = apres_jogo()
 
                     if a == 1: tarot.sete_chaves()
 
+                elif opcao == 12:
+                    print(Fore.GREEN + "\n-> 6 Arcanos para vermos como estamos, como anda nosso relacionamento com nós mesmos. Créditos ao queridíssimo Wayner Lyra.")
+                    a = apres_jogo()
+
+                    if a == 1: tarot.estrela()
                 else: pass
 
         elif opcao1 == 2: #lenormand
@@ -217,7 +226,7 @@ def main():
 
                 else: pass
 
-        elif opcao1 == 3: #numerologia
+        elif opcao1 == 4: #numerologia pelo tarô
             opcao = 1
             while opcao != 0:
                 print("\nEscolha o que deseja ver:")
@@ -232,7 +241,7 @@ def main():
                 elif opcao == 5: numerology.espelho()
                 else: pass
 
-        elif opcao1 == 4:
+        elif opcao1 == 3: #jogos salvos
             print(Fore.MAGENTA + "\n--> ESSES SÃO OS JOGOS SALVOS:")
             loop = 1
 
@@ -254,10 +263,10 @@ def main():
                 resp = int(input("\nDigite o " + Fore.GREEN + "número do jogo que quer ver" + Fore.WHITE + ", ou " + Fore.RED + "0 se quiser voltar" + Fore.RESET + ": "))
 
                 if resp != 0:
-                    try:
-                        jogow = connection.execute("SELECT pergunta, data, hora, mesa, cartas FROM jogos WHERE id = ?", (str(resp)))
-                    except:
-                        print("Não tem jogo com esse número. Digite outro.\n")
+                    #try:
+                    jogow = connection.execute("SELECT pergunta, data, hora, mesa, cartas FROM jogos WHERE id = ?", (str(resp),))
+                    #except:
+                        #print("Não tem jogo com esse número. Digite outro.\n")
                     jogo = jogow.fetchone()
                         
                     print(Fore.MAGENTA + "\nPERGUNTA:", jogo[0])
@@ -281,6 +290,8 @@ def main():
                     input("\nAperte Enter para voltar para o menu...")
                 loop = 0
 
+        elif opcao1 == 5: #numerologia pitagórica
+            pythagorean.numerologia()
     #se a pessoa quiser sair do prog
     print(EXIT_TEXT)
 

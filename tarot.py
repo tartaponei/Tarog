@@ -706,7 +706,8 @@ def peladan():
 def sete_chaves():
     """Método das 7 Chaves.
     7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. 
-    A magia precisa ter sido confirmada através de outro jogo ou método antes deste método."""
+    A magia precisa ter sido confirmada através de outro jogo ou método antes deste método.
+    Créditos ao queridíssimo Wayner Lyra."""
 
     template = Image.open("./img/templates/7-chaves.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
@@ -756,6 +757,75 @@ def sete_chaves():
         else: r = "COMO RESOLVER (CONSELHO)"
 
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "CASA %s: %s | " %(r, carta)
+
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
+    encerrar_jogo(connection)
+
+def estrela():
+    """Método da Estrela
+    6 cartas que mostram respectivamente Você Hoje, Estudos e Vida Social, Vida Afetiva e Família, Espiritualidade e Defesa Energética, Dinheiro e Trabalho e o Caminho/Conselho.
+    Para saber como estamos com nós mesmos. 
+    Créditos ao queridíssimo Wayner Lyra.
+    """
+    template = Image.open("./img/templates/estrela.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    posicoes = [(562, 876), (152, 504), (152, 1212), (958, 1212), (958, 504), (562, 98)]
+
+    connection, cursor = comecar_jogo()
+
+    cursor.execute("SELECT id, nome FROM cartas")
+    cartas = cursor.fetchall()
+
+    numeros = sample(TODOS, 6) #pega 6
+
+    instrucoes(6)
+
+    imagens = []
+
+    #pega as imagens e guarda no vetor
+    for numero in numeros:
+        path = "./img/cards/tarot"
+        c_id = cartas[numero][0] #id da carta em questão
+
+        for _, _, files in os.walk(path):
+                for imagem in files:
+                    if imagem.endswith(".png"):
+                        nome = os.path.splitext(imagem)
+
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                        else: pasta = "minor"
+
+                        if int(nome[0][:2]) == int(c_id)-1: 
+                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
+                            imagens.append(img)
+    
+    print(Fore.GREEN + "\n--> ESTRELA <--\n")
+
+    cartas_string = ""
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "VOCÊ HOJE"
+        elif numero[0] == 1: r = "ESTUDOS / VIDA SOCIAL"
+        elif numero[0] == 2: r = "VIDA AFETIVA / FAMÍLIA"
+        elif numero[0] == 3: r = "ESPIRITUALIDADE / DEFESAS"
+        elif numero[0] == 4: r = "DINHEIRO / TRABALHO"
+        else: r = "CAMINHO / CONSELHO"
+
+        print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
         cartas_string += "CASA %s: %s | " %(r, carta)
 
     #montagem da imagem do jogo
