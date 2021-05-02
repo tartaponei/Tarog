@@ -14,9 +14,45 @@ TODOS = range(0, 78)
 MENORES = range(0, 56)
 MAIORES = range(0, 22)
 
+LENORMAND = range(1, 36)
+
+def pegar_imagens(numeros, cartas, tarot=False, lenormand=False):
+    imagens = []
+
+    if tarot:
+            for numero in numeros:
+                path = "./img/cards/tarot"
+                c_id = cartas[numero][0] #id da carta em questão
+
+                for _, _, files in os.walk(path):
+                        for imagem in files:
+                            if imagem.endswith(".png"):
+                                nome = os.path.splitext(imagem)
+
+                                if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                                else: pasta = "minor"
+
+                                if int(nome[0][:2]) == int(c_id)-1: 
+                                    img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
+                                    imagens.append(img)
+
+    if lenormand:
+        for numero in numeros:
+            path = "./img/cards/lenormand"
+            c_id = cartas[numero][0] #id da carta em questão
+
+            for imagem in os.listdir(path):
+                nome = os.path.splitext(imagem)
+
+                if int(nome[0][:2]) == int(c_id):
+                    img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                    imagens.append(img)
+
+    return imagens
+
 ##
 
-def jogo_personalizado():
+def jogo_personalizado(tarot=False, lenormand=False):
     """Joga um jogo personalizado, com número de cartas e quais Arcanos usar personalizados."""
 
     connection = comecar_jogo(personalizado=True)
@@ -29,45 +65,54 @@ def jogo_personalizado():
     if n_cartas == 1: n = "CARTA"
     else: n = "CARTAS"
 
-    resp = 0
-    while resp < 1 or resp > 6:
-        print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n" + Fore.GREEN + "4- SÓ ARCANOS MENORES NUMERADOS (40)\n" + Fore.RED + "5- SÓ A CORTE (16)\n" + Fore.BLUE + "6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
-        resp = int(input("Digite o número: "))
+    #usando cartas do tarô
+    if tarot:
+        resp = 0
+        while resp < 1 or resp > 6:
+            print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n" + Fore.GREEN + "4- SÓ ARCANOS MENORES NUMERADOS (40)\n" + Fore.RED + "5- SÓ A CORTE (16)\n" + Fore.BLUE + "6- ARCANOS MAIORES + ARCANOS MENORES NUMERADOS (62)")
+            resp = int(input("Digite o número: "))
 
-    cartas = []
+        cartas = []
 
-    if resp == 1: 
-        for linha in connection.execute("SELECT nome FROM cartas"):
+        if resp == 1: 
+            for linha in connection.execute("SELECT nome FROM cartas"):
+                cartas.append(linha[0])
+            jogo = "TODO O BARALHO"
+
+        elif resp == 2: 
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+                cartas.append(linha[0])
+            jogo = "OS 22 ARCANOS MAIORES"
+
+        elif resp == 3: 
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
+                cartas.append(linha[0])
+            jogo = "OS 56 ARCANOS MENORES"
+
+        elif resp == 4: 
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
+                cartas.append(linha[0])
+            jogo = "OS 40 ARCANOS MENORES NUMERADOS"
+
+        elif resp == 5: 
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'corte'"):
+                cartas.append(linha[0])
+            jogo = "OS 16 ARCANOS MENORES DA CORTE"
+
+        elif resp == 6: 
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+                cartas.append(linha[0])
+
+            for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
+                cartas.append(linha[0])
+            jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
+
+    #usando cartas do baralho cigano
+    if lenormand:
+        cartas = []
+        for linha in connection.execute("SELECT nome FROM lenormand"):
             cartas.append(linha[0])
-        jogo = "TODO O BARALHO"
-
-    elif resp == 2: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
-            cartas.append(linha[0])
-        jogo = "OS 22 ARCANOS MAIORES"
-
-    elif resp == 3: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
-            cartas.append(linha[0])
-        jogo = "OS 56 ARCANOS MENORES"
-
-    elif resp == 4: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
-            cartas.append(linha[0])
-        jogo = "OS 40 ARCANOS MENORES NUMERADOS"
-
-    elif resp == 5: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'corte'"):
-            cartas.append(linha[0])
-        jogo = "OS 16 ARCANOS MENORES DA CORTE"
-
-    elif resp == 6: 
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
-            cartas.append(linha[0])
-
-        for linha in connection.execute("SELECT nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.tipo = 'numerado'"):
-            cartas.append(linha[0])
-        jogo = "22 ARCANOS MAIORES + 40 ARCANOS MENORES NUMERADOS"
+        jogo = "BARALHO CIGANO"
 
     instrucoes(n_cartas)
 
@@ -87,37 +132,44 @@ def jogo_personalizado():
 
     encerrar_jogo(connection)
 
-def arcano_espelho():
+def arcano_espelho(tarot=False, lenormand=False):
     """Método de Arcano Espelho.
     1 Arcano Maior (ou pode usar o baralho todo) que é um espelho energético diário ou semanal de quem tira a carta, e indica como vai ser seu dia/semana e como agir.
     Autoconhecimento diário. Usuário mentaliza se quer saber do dia ou da semana."""
 
     connection = comecar_jogo(personalizado=True)
 
-    resp = 0
-    while resp < 1 or resp > 3:
-        print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
-        resp = int(input("Digite o número: "))
-
     cartas = []
 
-    if resp == 1: 
-        for linha in connection.execute("SELECT id, nome FROM cartas"):
-            cartas.append(linha)
-        n = 78
-        path = "./img/cards/tarot"
+    if tarot:
+        resp = 0
+        while resp < 1 or resp > 3:
+            print("\nEscolha quais cartas você quer usar:\n" + Fore.CYAN + "1- TODOS OS 78 ARCANOS\n" + Fore.MAGENTA + "2- SÓ ARCANOS MAIORES (22)\n" + Fore.YELLOW + "3- SÓ ARCANOS MENORES (56)\n")
+            resp = int(input("Digite o número: "))
 
-    elif resp == 2: 
-        for linha in connection.execute("SELECT cartas.id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
-            cartas.append(linha)
-        n = 22
-        path = "./img/cards/tarot/major"
+        if resp == 1: 
+            for linha in connection.execute("SELECT id, nome FROM cartas"):
+                cartas.append(linha)
+            n = 78
+            path = "./img/cards/tarot"
 
-    elif resp == 3: 
-        for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
+        elif resp == 2: 
+            for linha in connection.execute("SELECT cartas.id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'maior'"):
+                cartas.append(linha)
+            n = 22
+            path = "./img/cards/tarot/major"
+
+        elif resp == 3: 
+            for linha in connection.execute("SELECT id, nome FROM cartas INNER JOIN tipos ON tipos.id = cartas.tipo_id WHERE tipos.grandeza = 'menor'"):
+                cartas.append(linha)
+            n = 56
+            path = "./img/cards/tarot/minor"
+
+    if lenormand:
+        path = "./img/cards/lenormand"
+        for linha in connection.execute("SELECT id, nome FROM lenormand"):
             cartas.append(linha)
-        n = 56
-        path = "./img/cards/tarot/minor"
+        n = 36
 
     instrucoes(1)
 
@@ -126,27 +178,35 @@ def arcano_espelho():
     carta = cartas[indice][1] #nome da carta
     c_id = cartas[indice][0]
 
-    pasta = ""
+    if tarot:
+        pasta = ""
 
-    if n == 78: #se forem todos os arcanos, vai ter que ver as duas subpastas
-        for _, _, files in os.walk(path):
-            for imagem in files:
-                if imagem.endswith(".png"):
-                    nome = os.path.splitext(imagem)
+        if n == 78: #se forem todos os arcanos, vai ter que ver as duas subpastas
+            for _, _, files in os.walk(path):
+                for imagem in files:
+                    if imagem.endswith(".png"):
+                        nome = os.path.splitext(imagem)
 
-                    if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                    else: pasta = "minor"
+                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                        else: pasta = "minor"
 
-                    if int(nome[0][:2]) == int(c_id)-1: img = Image.open("./img/cards/tarot/{}/{}" .format(pasta, imagem)) #se o número no nome do arquivo bater com o id-1 (pq no banco tá +1), ele pega essa imagem
-    else: #se for só os maiores ou só os menores ele vê só as subpastas
+                        if int(nome[0][:2]) == int(c_id)-1: img = Image.open("./img/cards/tarot/{}/{}" .format(pasta, imagem)) #se o número no nome do arquivo bater com o id-1 (pq no banco tá +1), ele pega essa imagem
+        else: #se for só os maiores ou só os menores ele vê só as subpastas
+            for imagem in os.listdir(path):
+                nome = os.path.splitext(imagem)
+
+                if int(nome[0][:2]) == int(c_id)-1: img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o id-1 (pq lá tá +1), ele pega essa imagem
+
+    if lenormand:
         for imagem in os.listdir(path):
             nome = os.path.splitext(imagem)
 
-            if int(nome[0][:2]) == int(c_id)-1: img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o id-1 (pq lá tá +1), ele pega essa imagem
+            if int(nome[0][:2]) == int(c_id):
+                img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
 
-    print(Fore.GREEN + "\n--> ARCANO ESPELHO DO DIA/SEMANA <--")
+    print(Fore.GREEN + "\n--> SIM OU NÃO / ESPELHO <--")
 
-    print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA É: " + Fore.RESET + carta)
+    print(Fore.GREEN + "\nSEU ARCANO ESPELHO DE HOJE/SEMANA / SUA RESPOSTA É: " + Fore.RESET + carta)
     cartas_string = carta + " | "
 
     img.save("./img/jogo.png", "PNG")
@@ -157,6 +217,61 @@ def arcano_espelho():
 
     os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
     
+    encerrar_jogo(connection)
+
+def conselho(tarot=False, lenormand=False):
+    """Método da Carta + Conselho do Dia
+    2 cartas que mostram, respectivamente, a Energia geral do dia e o Conselho para o dia (o que fazer ou o que não fazer).
+    """
+
+    template = Image.open("./img/templates/2-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    posicoes = [(91, 93), (507, 93)]
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    instrucoes(1)
+
+    print(Fore.BLUE + "\n--> CARTA E CONSELHO DO DIA <--\n")
+
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
+        numeros = sample(LENORMAND, 2)
+
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
+
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+        numeros = sample(TODOS, 2)
+
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
+
+    cartas_string = ""
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "ENERGIA DO DIA"
+        else: r = "CONSELHO"
+        
+        print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "%s: %s | " %(r, carta)
+    
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
     encerrar_jogo(connection)
 
 def elementos():
@@ -225,12 +340,140 @@ def elementos():
 
     encerrar_jogo(connection)
 
-def mandala_tres():
+def espiritualidade(tarot=False, lenormand=False): #NÃO TÁ FEITO!!!!!!!!
+    """Método da Espiritualidade
+    7 cartas que mostram nossa conexão com a espiritualdiade através dos chakras, respectivamente Seres Ínferos, Ancestrais, Você (Alma), Você (Espírito), Mentores, Anjos (Protetores) e Divindade.
+    Créditos ao querdiíssimo Wayner Lyra.
+    """
+
+def mandala_tres(tarot=False, lenormand=False):
     """Método Mandala de 3.
-    3 Arcanos que representam, respecitivamente, Passado ou Causa, Presente ou Situação Atual, e Futuro ou Consequência.
+    3 cartas que podem ser lidas de forma linear, como Passado - Presente - Futuro ou Causa - Situação - Consequência
     Para perguntas objetivas de sim ou não e bem formuladas."""
 
     template = Image.open("./img/templates/mandala-3.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    pos_1 = (56, 53)
+    pos_2 = (376, 53)
+    pos_3 = (700, 53)
+
+    pos_4 = (84, 383)
+    pos_5 = (404, 383)
+    pos_6 = (730, 383)
+
+    connection, cursor = comecar_jogo()
+
+    resp = 0
+    while resp < 1 or resp > 2:
+        print("\nQuantas cartas por casa você quer usar? (1 ou 2):")
+        resp = int(input("Digite o número: "))
+
+    if resp == 2: 
+        template = Image.open("./img/templates/3-cartas.png")
+        copy_template = template.copy()
+
+    instrucoes(3)
+
+    print(Fore.GREEN + "\n--> 3 CARTAS <--\n")
+
+    imagens = []
+
+    #pega as imagens e guarda no vetor (esse método é diferetne dos outros então deixei aqui)
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
+        numeros = sample(LENORMAND, resp*3)
+        path = "./img/cards/lenormand"
+
+        for numero in numeros:
+            path = "./img/cards/lenormand"
+            c_id = cartas[numero][0] #id da carta em questão
+
+            for imagem in os.listdir(path):
+                nome = os.path.splitext(imagem)
+
+                if int(nome[0][:2]) == int(c_id)-1:
+                    img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                    imagens.append(img)
+
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+        numeros = sample(range(1, 78), resp*3)
+        path = "./img/cards/tarot"
+
+        for numero in numeros:
+            path = "./img/cards/tarot"
+            c_id = cartas[numero][0] #id da carta em questão
+
+            for _, _, files in os.walk(path):
+                    for imagem in files:
+                        if imagem.endswith(".png"):
+                            nome = os.path.splitext(imagem)
+
+                            if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                            else: pasta = "minor"
+
+                            if int(nome[0][:2]) == int(c_id)-2: 
+                                img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
+                                imagens.append(img)
+
+    cartas_n = []
+    for numero in numeros:
+        for carta in cartas:
+            if int(carta[0]) == numero:
+                cartas_n.append(carta)
+
+    cartas_string = ""
+
+
+    for i, carta in enumerate(cartas_n):
+        if len(numeros) == 6:
+            if i == 0 or i == 2 or i == 4:
+                if i == 0: r = "PASSADO/CAUSA"
+                elif i == 2: r = "PRESENTE/SITUAÇÃO"
+                else: r = "FUTURO/CONSEQUÊNCIA"
+
+                if len(numeros) == 6: carta = carta[1] + " + " + cartas_n[i+1][1] #duas cartas por vez
+
+                print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+                cartas_string += "%s: %s | " %(r, carta)
+        else:
+            if i == 0: r = "PASSADO/CAUSA"
+            elif i == 1: r = "PRESENTE/SITUAÇÃO"
+            else: r = "FUTURO/CONSEQUÊNCIA"
+
+            print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta[1]))
+            cartas_string += "%s: %s | " %(r, carta[1])
+
+    #montagem da imagem do jogo
+    if len(numeros) == 3:
+        for i in range(len(imagens)):
+            if i == 0: copy_template.paste(imagens[i], pos_1)
+            elif i == 1: copy_template.paste(imagens[i], pos_2)
+            else: copy_template.paste(imagens[i], pos_3)
+
+    else:
+        for i in range(len(imagens)):
+            if i == 0: copy_template.paste(imagens[i], pos_1)
+            elif i == 1: copy_template.paste(imagens[i], pos_4)
+            elif i == 2: copy_template.paste(imagens[i], pos_2)
+            elif i == 3: copy_template.paste(imagens[i], pos_5)
+            elif i == 4: copy_template.paste(imagens[i], pos_3)
+            else: copy_template.paste(imagens[i], pos_6)
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
+    encerrar_jogo(connection)
+
+
+    """template = Image.open("./img/templates/mandala-3.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
     posicoes =[(56, 53), (376, 53), (700, 53)]
 
@@ -288,9 +531,9 @@ def mandala_tres():
 
     os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
 
-    encerrar_jogo(connection)
+    encerrar_jogo(connection)"""
 
-def mandala_cinco():
+def mandala_cinco(tarot=False, lenormand=False):
     """Método Manda de 5.
     5 Arcanos que representam, respecitvamente, Situação Atual, Influência Externa, Oposição, Favorecimento, Resultado e Conselho.
     Para perguntas objetivas e bem formuladas."""
@@ -301,31 +544,22 @@ def mandala_cinco():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(6)
 
-    numeros = sample(TODOS, 6)
+    if lenormand:
+        numeros = sample(LENORMAND, 6)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
 
-    imagens = []
-
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
-
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
-
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+    if tarot:
+        numeros = sample(TODOS, 6)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
 
     print(Fore.YELLOW + "\n--> MANDALA DE 5 <--\n")
     
@@ -358,7 +592,7 @@ def mandala_cinco():
 
     encerrar_jogo(connection)
 
-def cruz_celta():
+def cruz_celta(tarot=False, lenormand=False):
     """Método Cruz Celta.
     10 Arcanos que representam, respectivamente, Situação Presente, Influência Imediata, Consulente Perante o Problema, Determinações do Passado, O Que o Consulente Não Conhece, Influências do Futuro, Consulente, Fatores Ambientais, Caminho do Destino, e Resultado Final.
     Para perguntas bem formuladas, mas apresenta mais detalhes."""
@@ -369,31 +603,49 @@ def cruz_celta():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(10)
-
-    numeros = sample(TODOS, 10)
 
     imagens = []
 
     #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
+    if tarot:
+        numeros = sample(TODOS, 10)
+        for numero in numeros:
+            path = "./img/cards/tarot"
+            c_id = cartas[numero][0] #id da carta em questão
 
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
+            for _, _, files in os.walk(path):
+                    for imagem in files:
+                        if imagem.endswith(".png"):
+                            nome = os.path.splitext(imagem)
 
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
+                            if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
+                            else: pasta = "minor"
 
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+                            if int(nome[0][:2]) == int(c_id)-1: 
+                                img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
+                                imagens.append(img)
+    if lenormand:
+        numeros = sample(LENORMAND, 10)
+        path = "./img/cards/lenormand"
+
+        for numero in numeros:
+            path = "./img/cards/lenormand"
+            c_id = cartas[numero][0] #id da carta em questão
+
+            for imagem in os.listdir(path):
+                nome = os.path.splitext(imagem)
+
+                if int(nome[0][:2]) == int(c_id):
+                    img = Image.open("{}/{}" .format(path, imagem)) #se o número no nome do arquivo bater com o valor do id, ele pega essa imagem
+                    imagens.append(img)
 
     imagens[1] = imagens[1].rotate(90,expand=True) #gira a carta 2
 
@@ -432,7 +684,7 @@ def cruz_celta():
 
     encerrar_jogo(connection)
 
-def taca_amor():
+def taca_amor(tarot=False, lenormand=False):
     """Método A Taça do Amor.
     7 Arcanos que representam, respectivamente, Como Está O Relacionamento, Consulente Na Situação, Parceiro Na Situação, O Que Favorece O Relacionamento, O Que Não Favorece O Relacionamento, Futuro Próximo da Relação, e Conselho Final.
     Para perguntas sobre amor e relacionamentos."""
@@ -443,31 +695,24 @@ def taca_amor():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(7)
-
-    numeros = sample(TODOS, 7)
 
     imagens = []
 
     #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
-
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
-
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+    if tarot:
+        numeros = sample(TODOS, 7)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
+    if lenormand:
+        numeros = sample(LENORMAND, 7)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
 
     print(Fore.MAGENTA + "\n--> TAÇA DO AMOR <--\n")
     
@@ -501,7 +746,124 @@ def taca_amor():
 
     encerrar_jogo(connection)
 
-def templo_afrodite():
+def cinco_cartas(tarot=False, lenormand=False):
+    """Método para Solução de Problemas
+    5 cartas que mostram, respectivamente, como o problema se encontra atualmente, atos do passado que resultaram ou influenciaram no presente, tendências do futuro próximo, algo oculto em meio a problema que a pessoa não sabe, e a solução/conselho para resolver o problema.
+    """
+
+    template = Image.open("./img/templates/5-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    posicoes = [(88, 116), (428, 116), (768, 116), (1104, 116), (1441, 116)]
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    instrucoes(5)
+
+    print(Fore.YELLOW + "\n--> CINCO CARTAS (SOLUÇÃO DE PROBLEMAS) <--\n")
+
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+
+    imagens = []
+
+    if lenormand:
+        numeros = sample(LENORMAND, 5)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
+    if tarot:
+        numeros = sample(TODOS, 5)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
+
+    cartas_string = ""
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "PRESENTE"
+        elif numero[0] == 1: r = "PASSADO"
+        elif numero[0] == 2: r = "FUTURO PRÓXIMO (CARTA CENTRAL)"
+        elif numero[0] == 3: r = "OCULTO"
+        else: r = "SOLUÇÃO"
+        
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "%s: %s | " %(r, carta)
+
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
+    encerrar_jogo(connection)
+
+def sete_cartas(tarot=False, lenormand=False):
+    """Método para Entendimento do Presente
+    7 cartas para visão mais profunda da situação atual, que mostram, respectivamente, Passado que resultou ou influencou no Presente, Situação no Atual Momento, tendências do Futuro Próximo, Resposta propriamente dita para a pergunta, Energias da situação, Esperanças/Medos da pessoa quanto à situação, e Resultado Final da situação.
+    """
+
+    template = Image.open("./img/templates/7-cartas.png")
+    copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
+    posicoes = [(70, 748), (381, 447), (694, 310), (1006, 104), (1321, 310), (1633, 467), (1943, 748)]
+
+    connection, cursor = comecar_jogo()
+    cartas = []
+
+    instrucoes(7)
+
+    print(Fore.YELLOW + "\n--> SETE CARTAS (VISÃO MAIS PROFUNDA DA SITUAÇÃO) <--\n")
+
+    if lenormand:
+        numeros = sample(LENORMAND, 7)
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
+    if tarot:
+        numeros = sample(TODOS, 7)
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+
+    if lenormand: imagens = pegar_imagens(numeros, cartas, lenormand=True)
+    if tarot: imagens = pegar_imagens(numeros, cartas, tarot=True)
+
+    cartas_string = ""
+
+    for numero in enumerate(numeros):
+        carta = cartas[numero[1]][1]
+
+        if numero[0] == 0: r = "PASSADO"
+        elif numero[0] == 1: r = "PRESENTE"
+        elif numero[0] == 2: r = "FUTURO PRÓXIMO"
+        elif numero[0] == 3: r = "RESPOSTA (CARTA CENTRAL)"
+        elif numero[0] == 4: r = "ENERGIAS"
+        elif numero[0] == 5: r = "MEDOS E ESPERANÇAS"
+        else: r = "RESULTADO FINAL"
+        
+        print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
+        cartas_string += "%s: %s | " %(r, carta)
+    
+    #montagem da imagem do jogo
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+    #salvamento do jogo
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
+    encerrar_jogo(connection)
+
+def templo_afrodite(tarot=False, lenormand=False):
     """Método Templo de Afrodite.
     7 Arcanos que representam, respectivamente, áreas Mental, Sentimental e Física de quem tira as cartas (1, 2, 3), áreas Mental, Sentimental e Física do(a) parceiro(a) (4, 5, 6) e a Síntese do Relacionamento (Prognóstico).
     Para questões sobre estado e situação de um relacionamento."""
@@ -512,31 +874,21 @@ def templo_afrodite():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(7)
 
-    numeros = sample(TODOS, 7)
-
-    imagens = []
-
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
-
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
-
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+    if tarot:
+        numeros = sample(TODOS, 7)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
+    if lenormand:
+        numeros = sample(LENORMAND, 7)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
 
     print(Fore.MAGENTA + "\n--> TEMPLO DE AFRODITE <--\n")
     
@@ -570,7 +922,7 @@ def templo_afrodite():
 
     encerrar_jogo(connection)
 
-def carater():
+def carater(tarot=False, lenormand=False):
     """Método do Caráter
     4 Arcanos que representam, respectivamente, a Persona da pessoa em questão (o que ela mostra ser, a "máscara"), a Personalidade (o que ela é realmente e não mostra), as Motivações (o que a leva a agir desse jeito) e as Intenções (o que ela realmente quer de você).
     Para saber sobre as intenções de alguém que você talvez desconfie, saber o que ela quer com você."""
@@ -581,31 +933,21 @@ def carater():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(4)
 
-    numeros = sample(TODOS, 4)
-
-    imagens = []
-
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
-
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
-
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+    if tarot:
+        numeros = sample(TODOS, 4)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
+    if lenormand:
+        numeros = sample(LENORMAND, 4)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
 
     print(Fore.GREEN + "\n--> MÉTODO DO CARÁTER <--\n")
     
@@ -636,7 +978,7 @@ def carater():
 
     encerrar_jogo(connection)
 
-def peladan():
+def peladan(tarot=False, lenormand=False):
     """Método Peladán.
     5 Arcanos que representam, respecitvamente, Positivo, Negativo, Caminho, Resultado e Síntese/Consulente.
     Para perguntas objetivas, bem formuladas e com tempo determinado."""
@@ -647,31 +989,21 @@ def peladan():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
-
-    numeros = sample(TODOS, 5) #pega 5
-
     instrucoes(5)
 
-    imagens = []
+    if tarot:
+        numeros = sample(TODOS, 5)
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
 
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
 
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
+    if lenormand:
+        numeros = sample(LENORMAND, 5)
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
     
     print(Fore.YELLOW + "\n--> PELADÁN <--\n")
 
@@ -703,7 +1035,7 @@ def peladan():
 
     encerrar_jogo(connection)
 
-def sete_chaves():
+def sete_chaves(tarot=False, lenormand=False):
     """Método das 7 Chaves.
     7 Arcanos para analisar a fundo alguma magia, feitiço ou amarração feita. 
     A magia precisa ter sido confirmada através de outro jogo ou método antes deste método.
@@ -715,31 +1047,19 @@ def sete_chaves():
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
-
-    numeros = sample(TODOS, 7) #pega 7
+    if tarot:
+        numeros = sample(TODOS, 7)
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
+    if lenormand:
+        numeros = sample(LENORMAND, 7)
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
     instrucoes(7)
 
-    imagens = []
-
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
-
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
-
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
-
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+    if tarot: imagens = pegar_imagens(numeros, cartas, tarot=True)
+    if lenormand: imagens = pegar_imagens(numeros, cartas, lenormand=True)
     
     print(Fore.YELLOW + "\n--> 7 CHAVES <--\n")
 
@@ -773,7 +1093,7 @@ def sete_chaves():
 
     encerrar_jogo(connection)
 
-def estrela():
+def estrela(tarot=False, lenormand=False):
     """Método da Estrela
     6 cartas que mostram respectivamente Você Hoje, Estudos e Vida Social, Vida Afetiva e Família, Espiritualidade e Defesa Energética, Dinheiro e Trabalho e o Caminho/Conselho.
     Para saber como estamos com nós mesmos. 
@@ -781,35 +1101,27 @@ def estrela():
     """
     template = Image.open("./img/templates/estrela.png")
     copy_template = template.copy() #copia a img pra não sobrescrever a do template na pasta
-    posicoes = [(562, 876), (152, 504), (152, 1212), (958, 1212), (958, 504), (562, 98)]
+    posicoes = [(562, 876), (152, 501), (152, 1212), (958, 1212), (958, 501), (562, 98)]
 
     connection, cursor = comecar_jogo()
 
-    cursor.execute("SELECT id, nome FROM cartas")
-    cartas = cursor.fetchall()
-
-    numeros = sample(TODOS, 6) #pega 6
-
     instrucoes(6)
 
-    imagens = []
+    if tarot:
+        cursor.execute("SELECT id, nome FROM cartas")
+        cartas = cursor.fetchall()
 
-    #pega as imagens e guarda no vetor
-    for numero in numeros:
-        path = "./img/cards/tarot"
-        c_id = cartas[numero][0] #id da carta em questão
+        numeros = sample(TODOS, 6) #pega 6
 
-        for _, _, files in os.walk(path):
-                for imagem in files:
-                    if imagem.endswith(".png"):
-                        nome = os.path.splitext(imagem)
+        imagens = pegar_imagens(numeros, cartas, tarot=True)
 
-                        if imagem in os.listdir("./img/cards/tarot/major"): pasta = "major"
-                        else: pasta = "minor"
+    if lenormand:
+        cursor.execute("SELECT id, nome FROM lenormand")
+        cartas = cursor.fetchall()
 
-                        if int(nome[0][:2]) == int(c_id)-1: 
-                            img = Image.open("{}/{}/{}" .format(path, pasta, imagem)) #se o número no nome do arquivo bater com o valor do id-1 (pq lá tá +1), ele pega essa imagem
-                            imagens.append(img)
+        numeros = sample(LENORMAND, 6) #pega 6
+
+        imagens = pegar_imagens(numeros, cartas, lenormand=True)
     
     print(Fore.GREEN + "\n--> ESTRELA <--\n")
 
