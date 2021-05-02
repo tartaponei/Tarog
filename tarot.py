@@ -50,6 +50,18 @@ def pegar_imagens(numeros, cartas, tarot=False, lenormand=False):
 
     return imagens
 
+def montar_mostrar_imagem(imagens, posicoes, copy_template):
+    for i in range(len(imagens)):
+        copy_template.paste(imagens[i], posicoes[i])
+
+    copy_template.save("./img/jogo.png", "PNG")
+    copy_template.show()
+
+def finalizar_jogo(cartas_string):
+    salvar_jogo(cartas_string)
+
+    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+
 ##
 
 def jogo_personalizado(tarot=False, lenormand=False):
@@ -212,10 +224,7 @@ def arcano_espelho(tarot=False, lenormand=False):
     img.save("./img/jogo.png", "PNG")
     img.show()
 
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
     
     encerrar_jogo(connection)
 
@@ -260,17 +269,9 @@ def conselho(tarot=False, lenormand=False):
         print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
         cartas_string += "%s: %s | " %(r, carta)
     
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -326,17 +327,9 @@ def elementos():
 
         cartas_string += carta + " | "
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -465,10 +458,7 @@ def mandala_tres(tarot=False, lenormand=False):
     copy_template.save("./img/jogo.png", "PNG")
     copy_template.show()
 
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -578,17 +568,9 @@ def mandala_cinco(tarot=False, lenormand=False):
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
         cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -668,19 +650,11 @@ def cruz_celta(tarot=False, lenormand=False):
         else: r = "RESULTADO FINAL"
 
         print(Fore.BLUE + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -730,19 +704,11 @@ def taca_amor(tarot=False, lenormand=False):
         else: r = "CONSELHO FINAL"
 
         print(Fore.MAGENTA + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -791,17 +757,9 @@ def cinco_cartas(tarot=False, lenormand=False):
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
         cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -849,17 +807,9 @@ def sete_cartas(tarot=False, lenormand=False):
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
         cartas_string += "%s: %s | " %(r, carta)
     
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -906,19 +856,11 @@ def templo_afrodite(tarot=False, lenormand=False):
         else: r = "\nSÍNTESE, PROGNÓSTICO DA RELAÇÃO"
 
         print(Fore.MAGENTA + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -962,19 +904,11 @@ def carater(tarot=False, lenormand=False):
         else: r = "INTENÇÕES DELA, O QUE ELA QUER DE VOCÊ"
 
         print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -1019,19 +953,11 @@ def peladan(tarot=False, lenormand=False):
         else: r = "COMO O CONSULENTE ESTÁ DIANTE DA SITUAÇÃO"
 
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -1077,19 +1003,11 @@ def sete_chaves(tarot=False, lenormand=False):
         else: r = "COMO RESOLVER (CONSELHO)"
 
         print(Fore.YELLOW + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
-    #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
 
@@ -1138,18 +1056,12 @@ def estrela(tarot=False, lenormand=False):
         else: r = "CAMINHO / CONSELHO"
 
         print(Fore.GREEN + "{}:" .format(r) + Fore.RESET + " {}" .format(carta))
-        cartas_string += "CASA %s: %s | " %(r, carta)
+        cartas_string += "%s: %s | " %(r, carta)
 
     #montagem da imagem do jogo
-    for i in range(len(imagens)):
-        copy_template.paste(imagens[i], posicoes[i])
+    montar_mostrar_imagem(imagens, posicoes, copy_template)
 
-    copy_template.save("./img/jogo.png", "PNG")
-    copy_template.show()
-
-    #salvamento do jogo
-    salvar_jogo(cartas_string)
-
-    os.remove("./img/jogo.png") #exclui a foto salva pq ela já tá no banco
+    finalizar_jogo(cartas_string)
 
     encerrar_jogo(connection)
+    
